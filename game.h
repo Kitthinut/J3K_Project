@@ -1,341 +1,147 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "screen.h"
-#include "entity.h"
 #include <iostream>
-#include <vector>
+#include <string>
 #include <cstdlib>
+#include <ctime>
+#include "render.h"
+#include "character.h"
 
-class Game
-{
+class Game {
 private:
-    Screen screen;
-    PlayerClass player;
-    bool running = true;
-    int level = 1;
-
-    void renderMonster(Monster &monster)
-    {
-        screen.print("Monster: " + monster.name, false);
-        screen.print("HP: " + std::to_string(monster.hp) + "  Attack: " + std::to_string(monster.attack) +
-                         "  Defense: " + std::to_string(monster.defense),
-                     false);
-    }
-
-    void combat(Monster &monster) {
-        bool playerTurn = true;
-    
-        while (player.hp > 0 && monster.isAlive()) {
-            renderCombatScene(player.role, player.hp, monster.name, monster.hp);
-    
-            if (playerTurn) {
-                screen.print("Player's turn.\n", false);
-                screen.print("HP: " + std::to_string(player.hp) + "  Mana: " + std::to_string(player.mana) + "\n", false);
-                screen.print("Choose action:\n", false);
-                screen.print("(1) Normal Attack\n", false);
-                screen.print("(2) Skill\n", false);
-    
-                int choice;
-                std::cin >> choice;
-                std::cin.ignore();
-    
-                int damage = 0;
-                switch (choice) {
-                    case 1: 
-                        damage = std::max(0, player.attack - monster.defense);
-                        monster.takeDamage(damage);
-                        screen.print("You dealt " + std::to_string(damage) + " damage!\n", false);
-                        break;
-                    case 2: 
-                        if (player.mana >= 10) {
-                            player.mana -= 10;
-                            damage = player.attack * 2;
-                            monster.takeDamage(damage);
-                            screen.print("Skill used! You dealt " + std::to_string(damage) + " damage!\n", false);
-                        } else {
-                            screen.print("Not enough mana for skill!\n", false);
-                        }
-                        break;
-                    default: 
-                        screen.print("Invalid choice. Try again.\n", false);
-                        continue;
-                }
-    
-                renderCombatScene(player.role, player.hp, monster.name, monster.hp);
-                playerTurn = false;
-    
-            } else {
-                int monsterDamage = std::max(0, monster.attack - player.defense);
-                player.hp -= monsterDamage;
-    
-                screen.print("Monster " + monster.name + " attacked and dealt " + std::to_string(monsterDamage) + " damage!\n", false);
-    
-                if (!monster.isAlive()) {
-                    screen.print("Monster " + monster.name + " got defeated!\n", false);
-                    renderCombatScene(player.role, player.hp, monster.name, monster.hp);
-                    break;
-                }
-    
-                renderCombatScene(player.role, player.hp, monster.name, monster.hp);
-                playerTurn = true;
-            }
-    
-            screen.render(true);
-            std::cin.get();
-        }
-    
-        if (player.hp <= 0) {
-            screen.print("You have been defeated! Game Over!\n", false);
-        }
-    }
-
-    void renderCombatScene(const std::string &playerName, int playerHP, const std::string &enemyName, int enemyHP)
-    {
-        screen.clear();
-        screen.rawPrint(R"(
-    ╔═════════════════════════════════════════════════════════════╗
-    ║                        ⚔ COMBAT START ⚔                    ║
-    ╚═════════════════════════════════════════════════════════════╝
-    )");
-
-        screen.rawPrint("\n");
-
-        screen.rawPrint(" " + playerName + " (HP: " + std::to_string(playerHP) + ")               vs               " + enemyName + " (HP: " + std::to_string(enemyHP) + ")\n");
-
-        screen.rawPrint(R"(
-         ███████████                                 ███████████
-         ███████████                                 ███████████
-         ██       ██        BATTLEFIELD              ██       ██
-         ██       ██          [ARENA]                ██       ██
-         ██       ██                                 ██       ██
-         ███████████                                 ███████████
-    )");
-
-        screen.rawPrint(R"(
-    ────────────────────────────────────────────────────────────────────
-      [1] Attack    [2] Defend    [3] Use Item    [4] Run
-    ────────────────────────────────────────────────────────────────────
-    )");
-
-        screen.render(true);
-    }
-    
-
-    void levelUp()
-    {
-        screen.clear();
-        screen.render();
-        std::cout << "Level " << level << " Complete!" << std::endl;
-        std::cout << "Select a card to upgrade your stats:" << std::endl;
-        std::cout << "[1] +5 Attack" << std::endl;
-        std::cout << "[2] +10 HP" << std::endl;
-        std::cout << "[3] +5 Attack, +5 HP" << std::endl;
-
-        int choice;
-        std::cin >> choice;
-        std::cin.ignore();
-
-        if (choice == 1)
-        {
-            player.upgradeStats(5, 0);
-        }
-        else if (choice == 2)
-        {
-            player.upgradeStats(0, 10);
-        }
-        else if (choice == 3)
-        {
-            player.upgradeStats(5, 5);
-        }
-        level++;
-    }
-
-    void dungeon()
-    {
-        std::vector<Monster> monsters = {
-            Monster("Goblin", 10, 5, 3),
-            Monster("Orc", 10, 7, 4),
-            Monster("Troll", 15, 10, 5),
-            Monster("Boss", 30, 15, 8)};
-
-        for (int i = 0; i < monsters.size(); i++)
-        {
-            combat(monsters[i]);
-            if (player.hp <= 0)
-            {
-                std::cout << "Game Over!" << std::endl;
-                return;
-            }
-            if (i == monsters.size() - 1)
-            {
-                levelUp();
-            }
-        }
-    }
-
-    void safeRoom()
-    {
-        bool inSafeRoom = true;
-        while (inSafeRoom)
-        {
-            screen.clear();
-            screen.drawBox("Lobby || Safe Zone", {"Talk to your co-workers or rest or fight monsters.",
-                                                  "[1] Enter Dungeon",
-                                                  "[2] Change Hero",
-                                                  "[3] Exit to Menu"});
-            screen.render();
-            screen.print("Your choice: ", false);
-
-            int choice;
-            std::cin >> choice;
-            std::cin.ignore();
-
-            switch (choice)
-            {
-            case 1:
-                enterDungeon();
-                break;
-            case 2:
-                chooseClass();
-                return;
-            case 3:
-                inSafeRoom = false;
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    void enterDungeon()
-    {
-        renderDungeon();
-        std::cin.get();
-        dungeon();
-    }
-
-    void renderDungeon()
-    {
-        screen.clear();
-        screen.drawBox("Dungeon", {
-                                      "████████████████████████████████████████████████████████████████████████████",
-                                      "█      Welcome to the Dungeon!                           █",
-                                      "█   /\\                                                  █",
-                                      "█  /  \\  Get a new buff after 1 stages!                 █",
-                                      "█  |  |                                                   █",
-                                      "█  \\  /  When the game is over, the remaining gold coins  █",
-                                      "█   \\/   will be converted to gems                       █",
-                                      "█                                                         █",
-                                      "█  Beware of the monsters that roam here.                █",
-                                      "█                                                       █",
-                                      "████████████████████████████████████████████████████████████████████████████",
-                                  });
-        screen.render();
-        screen.print("Press Enter to enter the dungeon...", false);
-    }
-
-    void chooseClass()
-    {
-        screen.clear();
-        screen.drawBox("Select a Hero", {"[1] Knight  - \"You go, I'm taking a break\"",
-                                         "[2] Paladin  - \"I like this TV show \"",
-                                         "[3] Engineer   - \"Fixing my turret\""});
-        screen.render();
-        screen.print("Enter choice: ", false);
-
-        int choice;
-        std::cin >> choice;
-        std::cin.ignore();
-
-        switch (choice)
-        {
-        case 1:
-            player = PlayerClass("Knight", "Sword", "Slash", "Potion");
-            break;
-        case 2:
-            player = PlayerClass("Wizard", "Wand", "Fireball", "Potion");
-            break;
-        case 3:
-            player = PlayerClass("Engineer", "Vernier Caliper", "Backstab", "Potion");
-            break;
-        default:
-            player = PlayerClass();
-            break;
-        }
-
-        safeRoom();
-    }
-
-    void mainMenu()
-    {
-        while (running)
-        {
-            screen.clear();
-            screen.drawBox("Main Menu", {"[1] Start Game",
-                                         "[2] About",
-                                         "[3] Exit"});
-            screen.render();
-            screen.print("Choose an option: ", false);
-
-            int choice;
-            std::cin >> choice;
-            std::cin.ignore();
-
-            switch (choice)
-            {
-            case 1:
-                chooseClass();
-                break;
-            case 2:
-                showAbout();
-                break;
-            case 3:
-                running = false;
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    void showAbout()
-    {
-        screen.clear();
-        screen.drawBox("About", {"Soul J3K Project",
-                                 "Some game data are stored locally, and",
-                                 "cannot be restored if you delete the game."});
-        screen.render();
-        screen.print("Press Enter to go back...");
-        std::cin.get();
-    }
+    Render renderer;     // Handles all rendering
+    PlayerClass player;  // Player character
+    Monster enemy;       // Enemy character
 
 public:
-    void start()
-    {
-        screen.clear();
-        titleScreen();
-        mainMenu();
+    // Default constructor that initializes player and enemy
+    Game() : player("Default Player", 100, 15), enemy("Goblin", 50, 10) {}
+
+    // Initializes the game with title screen and input
+    // This function manages the main menu loop, allowing the player to select an option (start game, show about, upgrade, or exit).
+    void start() {
+        int choice;
+        do {
+            renderer.renderTitleScreen();  // Render title screen
+            std::cout << "Choose option (1-4): ";
+            std::cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    play();  // Start the game
+                    break;
+                case 2:
+                    renderer.renderAbout();  // Display about information
+                    waitForEnter();
+                    break;
+                case 3:
+                    upgrade();  // Start the upgrade process
+                    break;
+                case 4:
+                    renderer.print("Exiting game...");  // Exit message
+                    break;
+                default:
+                    renderer.print("Invalid choice.");  // Invalid option message
+                    break;
+            }
+        } while (choice != 4);  // Exit the loop if the user selects option 4 (exit)
     }
 
-    void titleScreen()
-    {
-        screen.clear();
-        screen.rawPrint(R"(
-       _ ____  _  __   _____  ____  _    _ _      _   _ _____ _____ _    _ _______ 
-      | |___ \| |/ /  / ____|/ __ \| |  | | |    | \ | |_   _/ ____| |  | |__   __|
-      | | __) | ' /  | (___ | |  | | |  | | |    |  \| | | || |  __| |__| |  | |   
-  _   | ||__ <|  <    \___ \| |  | | |  | | |    | . ` | | || | |_ |  __  |  | |   
- | |__| |___) | . \   ____) | |__| | |__| | |____| |\  |_| || |__| | |  | |  | |   
-  \____/|____/|_|\_\ |_____/ \____/ \____/|______|_| \_|_____\_____|_|  |_|  |_|   
-                                                                                 
+private:
+    // Starts the game and initializes characters
+    // This function initializes the player and enemy characters and begins the combat loop.
+    void play() {
+        renderer.renderDungeonIntro();  // Render intro screen
+        waitForEnter();  // Wait for user input
 
-              S O U L N I G H T
+        std::string playerName;
+        std::cout << "Enter your character's name: ";  
+        std::cin >> playerName;
 
-           PRESS [ENTER] TO START)");
-        screen.render(true);
+        player.setName(playerName);  // Set the player's name from input
+
+        combat();  // Start the combat loop
+    }
+
+    // Executes the combat loop
+    // This function simulates the combat between the player and the enemy, processing player and enemy actions.
+    void combat() {
+        srand(static_cast<unsigned int>(time(nullptr)));  // Seed random number generator
+
+        while (player.isAlive() && enemy.isAlive()) {
+            renderer.renderCombatScene(player.getName(), player.getHP(), enemy.getName(), enemy.getHP());  // Render combat scene
+
+            std::cout << "\n1. Attack\n2. Defend\nChoose action: ";  // Display combat options
+            int choice;
+            std::cin >> choice;
+
+            if (choice == 1) {
+                int damage = rand() % 10 + 5;  // Random damage between 5 and 15
+                enemy.takeDamage(damage);      // Apply damage to enemy
+                renderer.print(player.getName() + " attacks " + enemy.getName() + " for " + std::to_string(damage) + " damage!");
+            } else {
+                renderer.print(player.getName() + " defends!");  // Player defends
+            }
+
+            // If the enemy is still alive, it counterattacks
+            if (enemy.isAlive()) {
+                int enemyDamage = rand() % 10 + 3;  // Random enemy damage between 3 and 12
+                player.takeDamage(enemyDamage);     // Apply damage to player
+                renderer.print(enemy.getName() + " attacks back for " + std::to_string(enemyDamage) + " damage!");
+            }
+
+            waitForEnter();  // Wait for player to continue
+        }
+
+        // After combat ends, display result
+        renderer.clear();
+        if (!player.isAlive()) {
+            renderer.drawBox("Game Over", { player.getName() + " has fallen in battle." });
+        } else {
+            renderer.drawBox("Victory!", { enemy.getName() + " has been defeated." });
+        }
+
+        waitForEnter();  // Wait for player to continue
+    }
+
+    // Waits for user input to continue
+    // This function pauses the game and waits for the player to press enter before continuing.
+    void waitForEnter() {
+        std::cout << WHITE_COLOR "\n(Press Enter to continue...)";
+        std::cin.ignore();
         std::cin.get();
     }
+
+    // Upgrade function to allow the player to enhance their stats
+    void upgrade() {
+        int upgradeChoice;
+        do {
+            renderer.renderUpgradeScreen();  // Render the upgrade screen with thematic style
+            
+            std::cout << "Choose an upgrade option: ";
+            std::cin >> upgradeChoice;
+    
+            switch (upgradeChoice) {
+                case 1:
+                    player.gainExperience(10);  // Increase attack power
+                    renderer.print("+10 Attack Power increased!");
+                    waitForEnter();
+                    break;
+                case 2:
+                    player.gainExperience(10);  // Increase HP
+                    renderer.print("+10 HP increased!");
+                    waitForEnter();
+                    break;
+                case 3:
+                    return;  // Exit upgrade menu
+                default:
+                    renderer.print("Invalid choice.");
+                    break;
+            }
+        } while (upgradeChoice != 3);  // Continue until the user chooses to return
+    }
+    
 };
 
 #endif
