@@ -47,8 +47,8 @@ class PlayerClass: public Character {
 
     public:
         PlayerClass(const std::string &name, int hp, int attack)
-            : Character(name, hp, attack), level(1), experience(0),
-              upgradePoints(5) {} // Default points set to 5
+            : Character(name, hp, attack), level(1), experience(0), upgradePoints(5) {
+        } // Default points set to 5
 
         // Function to gain experience and potentially level up
         void gainExperience(int exp) {
@@ -113,8 +113,8 @@ class Monster: public Character {
             : Character(name, hp, attack) {}
 
         void displayStats() const override {
-            std::cout << "Monster: " << name << " | HP: " << currentHP << "/"
-                      << maxHP << " | ATK: " << attackPower << std::endl;
+            std::cout << "Monster: " << name << " | HP: " << currentHP << "/" << maxHP
+                      << " | ATK: " << attackPower << std::endl;
         }
 };
 

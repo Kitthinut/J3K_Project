@@ -44,14 +44,17 @@ class Game {
                     case 4:
                         renderer.print("Exiting game..."); // Exit message
                         break;
-                    default:
-                        renderer.print("Invalid choice."); // Invalid option message
-                        break;
+                    default: invalid(); break;
                 }
             } while (choice != 4); // Exit the loop if the user selects option 4 (exit)
         }
 
     private:
+        void invalid() {
+            renderer.print(RED_COLOR "Invalid choice."); // Invalid option message
+            waitForEnter();
+        }
+
         // Starts the game and initializes characters
         // This function initializes the player and enemy characters and begins the
         // combat loop.
@@ -138,12 +141,6 @@ class Game {
                 std::cout << "Choose an upgrade option: ";
                 std::cin >> upgradeChoice;
 
-                if (!std::cin) {
-                    renderer.print("Invalid choice.");
-                    waitForEnter();
-                    continue;
-                }
-
                 switch (upgradeChoice) {
                     case 1:
                         player.gainExperience(10); // Increase attack power
@@ -156,7 +153,7 @@ class Game {
                         waitForEnter();
                         break;
                     case 3 : return; // Exit upgrade menu
-                    default: break;
+                    default: invalid(); break;
                 }
             } while (upgradeChoice != 3); // Continue until the user chooses to return
         }

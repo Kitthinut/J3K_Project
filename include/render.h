@@ -19,19 +19,10 @@
 #define BOLD          "\033[1m"
 #define UNDERLINE     "\033[4m"
 
-// Cool text effects
-#define BLINK "\033[5m" // Blinking text
-
 class Render {
     public:
-        // Clears the console
-        void clear() {
-#ifdef _WIN32
-            system("cls");
-#else
-            system("clear");
-#endif
-        }
+        // Clear entire screen and moves cursor to upper left
+        void clear() { std::cout << "\x1b[2J\x1b[H"; }
 
         // Draws a stylish box with a title and list of options
         void drawBox(const std::string &title, const std::vector<std::string> &content) {
