@@ -1,7 +1,9 @@
 #pragma once
-#include <entity.h> // Assuming this header file contains the definition of the Entity class
-#include <skill.h> // Assuming this header file contains the definition of the Skill class
+#include "entity.h" // Assuming this header file contains the definition of the Entity class
+#include "skill.h" // Assuming this header file contains the definition of the Skill class
 
+#ifndef PLAYER_H
+#define PLAYER_H
 class Player : public Entity {
     private : 
         int _level = 1; // The level of the player
@@ -17,3 +19,4 @@ class Player : public Entity {
             Player(maxHP, maxHP, maxMana, maxMana, attakPerPower, defensePower, level, EXPtoNextLevel, gold) {}
         ~Player() = default;
  };
+#endif // PLAYER_H
