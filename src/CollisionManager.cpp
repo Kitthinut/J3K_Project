@@ -10,7 +10,7 @@ void CollisionManager::loadObstacles() {
         {1290, 830, 340, 200},  {1050, 690, 80, 390},  {830, 1000, 220, 80},
         {180, 1000, 480, 80},   {180, 0, 40, 1080},    {180, 0, 1590, 350},
         {1710, 0, 60, 1080},    {1130, 1040, 640, 40}
-    };
+    }; 
 
     // Classroom obstacles
     roomObstacles[Room::Classroom] = {

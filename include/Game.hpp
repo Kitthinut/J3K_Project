@@ -5,6 +5,7 @@
 #include "Enum/Room.hpp"
 #include "Struct/Interactable.hpp"
 #include "UI/UI.hpp"
+#include "Struct/CollisionManager.hpp"
 
 #include <functional>
 #include <SFML/Graphics.hpp>
@@ -70,12 +71,12 @@ class Game {
         std::string playerName        = "Hero";
         bool        showCharacterInfo = false;
 
+        CollisionManager collisionManager;
+
         // Game loop helpers
         void processEvents();
         void update();
         void render();
-        void updateObstaclesForCurrentRoom();
-        void loadObstacles();
 
     public:
         Game();

@@ -1,4 +1,5 @@
 #include "Game.hpp"
+
 #include "Struct/CollisionManager.hpp"
 
 #include <iostream>
@@ -8,8 +9,6 @@
 #include <vector>
 
 Game::Game() {
-    
-    CollisionManager collisionManager;
 
     // Load character portrait
     if (!portraitTexture.loadFromFile("assets/characters/temp-1.png")) {
@@ -60,8 +59,8 @@ Game::Game() {
                                             PLAYER_FRAME));
     playerSprite.setPosition(playerPosition);
 
-    loadObstacles();
-    updateObstaclesForCurrentRoom();
+    collisionManager.setCurrentRoom(Room::Dorm);
+    obstacles = collisionManager.getCurrentObstacles();
 }
 
 void Game::processEvents() {
@@ -234,22 +233,13 @@ void Game::update() {
     nextBounds.left          += movement.x;
     nextBounds.top           += movement.y;
 
-    bool collided = false;
-    for (const auto &obstacle : obstacles) {
-        if (nextBounds.intersects(obstacle)) {
-            collided = true;
-            break;
-        }
-    }
-
-    if (!collided) playerPosition += movement;
-
     playerSprite.setPosition(playerPosition); // Update sprite position
 
     if (playerPosition.y > 1080) {
         // Transition to another room
         currentRoom = Classroom;
-        updateObstaclesForCurrentRoom();
+        collisionManager.setCurrentRoom(Room::Classroom);
+        obstacles      = collisionManager.getCurrentObstacles();
         playerPosition = sf::Vector2f(800, 100); // Reset position in new room
         playerSprite.setPosition(playerPosition);
 
@@ -267,7 +257,8 @@ void Game::update() {
     // Move to LOBBY if walking up off the screen
     if (playerPosition.y < 0) {
         currentRoom = Dorm;
-        updateObstaclesForCurrentRoom();
+        collisionManager.setCurrentRoom(Room::Classroom);
+        obstacles      = collisionManager.getCurrentObstacles();
         playerPosition = sf::Vector2f(800, 900); // Spawn from bottom
         playerSprite.setPosition(playerPosition);
 
@@ -280,42 +271,6 @@ void Game::update() {
 
         dialogueBox.setText("You entered the lobby.");
     }
-}
-
-void Game::updateObstaclesForCurrentRoom() { obstacles = roomObstacles[currentRoom]; }
-
-void Game::loadObstacles() {
-    // Dorm room obstacles
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(1300, 240, 340, 430));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(290, 70, 310, 400));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(360, 600, 410, 290));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(0, 0, 180, 1080));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(1770, 0, 150, 1080));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(660, 1040, 170, 40));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(1290, 830, 340, 200));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(1050, 690, 80, 390));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(830, 1000, 220, 80));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(180, 1000, 480, 80));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(180, 0, 40, 1080));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(180, 0, 1590, 350));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(1710, 0, 60, 1080));
-    roomObstacles[Room::Dorm].push_back(sf::FloatRect(1130, 1040, 640, 40));
-
-    // Classroom obstacles
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(440, 0, 240, 340));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(1250, 0, 240, 340));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(0, 0, 185, 1080));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(1760, 0, 160, 1080));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(780, 295, 370, 170));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(370, 550, 255, 140));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(845, 555, 260, 135));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(1325, 555, 255, 135));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(330, 755, 265, 145));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(830, 755, 290, 155));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(1340, 755, 280, 155));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(185, 0, 255, 340));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(680, 0, 570, 340));
-    roomObstacles[Room::Classroom].push_back(sf::FloatRect(1490, 0, 270, 340));
 }
 
 void Game::render() {
