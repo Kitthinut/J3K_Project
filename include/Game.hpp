@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#define PLAYER_FRAME  64
+#define PLAYER_FRAME 64
 
 class Game {
     private:
@@ -43,8 +43,9 @@ class Game {
         DialogueBox dialogueBox;
 
         // Rooms and Transitions
-        Room                       currentRoom = Dorm;
-        std::vector<sf::FloatRect> obstacles;
+        Room                                       currentRoom = Dorm;
+        std::vector<sf::FloatRect>                 obstacles;
+        std::map<Room, std::vector<sf::FloatRect>> roomObstacles;
 
         // Interactables
         std::vector<Interactable> interactables;
@@ -73,6 +74,8 @@ class Game {
         void processEvents();
         void update();
         void render();
+        void updateObstaclesForCurrentRoom();
+        void loadObstacles();
 
     public:
         Game();
