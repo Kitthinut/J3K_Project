@@ -1,9 +1,12 @@
 #include "Game.hpp"
 
+#include "Struct/CollisionManager.hpp"
+
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+#include <vector>
 
 Game::Game() {
     // Load background
