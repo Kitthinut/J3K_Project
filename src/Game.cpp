@@ -42,6 +42,15 @@ void Game::processEvents() {
             break;
         }
 
+        if (inDungeonTest) {
+            bool exitDungeonTest = false;
+            dungeon.handleEvent(event, exitDungeonTest);
+            if (exitDungeonTest) {
+                inDungeonTest = false;
+            }
+            return; // Skip normal event processing
+        }
+
         if (event.type != sf::Event::KeyPressed) break;
         const sf::Keyboard::Key key = event.key.code;
 
@@ -63,15 +72,17 @@ void Game::processEvents() {
                         std::cout << "You chose to upgrade stats!" << std::endl;
                         ui.popup_upgrade.open();
                         break;
-                    case 1:
+                    case 1: // Dungeon Test
                         std::cout << "You chose to play games!" << std::endl;
+                        inDungeonTest = true;
+                        dungeon.reset();
                         break;
                     default: break;
                 }
 
                 // Hide the choice popup after selection
                 ui.popup_choice.close();
-            } else {
+            } else if (!ui.popUpIsOpen()) {
                 switch (player.GetInteract()) {
                     case Computor:
                         ui.popup_choice.open();
@@ -99,7 +110,7 @@ void Game::processEvents() {
         // Handle plus/minus for upgrading stats
         if (ui.popup_upgrade.isOpen()) {
             int selected = ui.popup_upgrade.getSelected();
-            if (key == sf::Keyboard::Left) {
+            if (key == sf::Keyboard::Right) {
                 if (selected == 0 && upgradePoints > 0) {
                     maxHP += 10;
                     upgradePoints--;
@@ -108,7 +119,7 @@ void Game::processEvents() {
                     upgradePoints--;
                 }
                 ui.popup_upgrade.close();
-            } else if (key == sf::Keyboard::Right) {
+            } else if (key == sf::Keyboard::Left) {
                 if (selected == 0 && maxHP > 0) {
                     maxHP -= 10;
                     upgradePoints++;
@@ -123,6 +134,11 @@ void Game::processEvents() {
 }
 
 void Game::update() {
+    if (inDungeonTest) {
+        dungeon.update();
+        return;
+    }
+
     // Update HP and Mana bars
     Volume hp   = {currentHP, maxHP};
     Volume mana = {currentMana, maxMana};
@@ -146,9 +162,15 @@ void Game::update() {
 
 void Game::render() {
     window.clear();
-    window.draw(background);
-    player.draw(window);
-    ui.render(window);
+
+    if (inDungeonTest) {
+        dungeon.render(window);
+    } else {
+        window.draw(background);
+        player.draw(window);
+        ui.render(window);
+    }
+
     window.display();
 }
 

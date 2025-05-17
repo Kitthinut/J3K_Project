@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Dungeon.hpp"
 #include "Enum/Direction.hpp"
 #include "Enum/Room.hpp"
 #include "Player.hpp"
@@ -41,9 +42,13 @@ class Game {
 
         // playerInfo
         std::string playerName = "Hero";
+        
+        // Dungeon
+        Dungeon dungeon;
+        bool inDungeonTest = false;
 
         void changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos);
-
+        
         // Game loop helpers
         void processEvents();
         void update();

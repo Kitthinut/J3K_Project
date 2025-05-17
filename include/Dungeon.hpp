@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Skill.hpp"
 
 #include <iostream>
@@ -34,11 +35,11 @@ class Dungeon {
 
         // กูขี้เกียจทำ 55555+
         void centerText(sf::Text &text, float x, float y);
-        void drawCenteredBoxWithText(sf::RenderWindow &window, const std::string &message,
-                                     float boxWidth, float boxHeight, float centerX,
-                                     float centerY, const sf::Font &font,
-                                     unsigned int charSize, sf::Color boxColor,
-                                     sf::Color textColor);
+        void drawCenteredBoxWithText(sf::RenderWindow  &window,
+                                     const std::string &message, float boxWidth,
+                                     float boxHeight, float centerX, float centerY,
+                                     const sf::Font &font, unsigned int charSize,
+                                     sf::Color boxColor, sf::Color textColor);
         enum class BattlePhase {
             Opening,
             PlayerPick,
