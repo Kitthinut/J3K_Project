@@ -60,33 +60,16 @@ void Game::processEvents() {
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) window.close();
 
-               // Dungeon Test input
+        // Jangkun Made change here !!!
+        // This is the entry of Dungeon Mode
         if (inDungeonTest) {
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Escape) {
-                    inDungeonTest = false;
-                    dungeon.reset();
-                    return;
-                }
-                if (dungeon.getCurrentTurn() == Dungeon::Player) {
-                    if (event.key.code == sf::Keyboard::Num1) {
-                        // Player selects Skill 1 (no effect for now)
-                    }
-                    if (event.key.code == sf::Keyboard::Num2) {
-                        // Player selects Skill 2 (no effect for now)
-                    }
-                    if (event.key.code == sf::Keyboard::E) {
-                        dungeon.endTurn();
-                    }
-                } else {
-                    if (event.key.code == sf::Keyboard::E) {
-                        dungeon.endTurn(); // Opponent ends turn
-                    }
-                }
+            bool exitDungeonTest = false;
+            dungeon.handleEvent(event, exitDungeonTest);
+            if (exitDungeonTest) {
+                inDungeonTest = false;
             }
             return; // Skip normal event processing
         }
-
 
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::C) {
@@ -300,10 +283,12 @@ void Game::update() {
         dialogueBox.setText("You entered the lobby.");
     }
 
+
+    // Jangkun Made change here !!!
+    // This is the UPDATE of Dungeon Mode
     if (inDungeonTest) {
-        // Only handle turn-based logic here
-        // For now, nothing happens except turn switching
-    return;
+        dungeon.update();
+        return;
     }
 }
 
@@ -464,38 +449,15 @@ void Game::render() {
     //     }
     // }
 
-
+    // Jangkun Made change here !!!
+    // This is the RENDER of Dungeon Mode
     if (inDungeonTest) {
-        // Draw a simple turn-based UI
-        sf::RectangleShape dungeonBG(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
-        dungeonBG.setFillColor(sf::Color(30, 30, 60, 255));
-        window.draw(dungeonBG);
-
-        sf::Font font;
-        font.loadFromFile("assets/fonts/Electrolize-Regular.ttf"); // Use your font path
-
-        sf::Text title("Dungeon Test Mode", font, 48);
-        title.setPosition(600, 100);
-        window.draw(title);
-
-        std::string turnStr = (dungeon.getCurrentTurn() == Dungeon::Player) ? "Player Turn" : "Opponent Turn";
-        sf::Text turnText(turnStr, font, 36);
-        turnText.setPosition(700, 200);
-        window.draw(turnText);
-
-        if (dungeon.getCurrentTurn() == Dungeon::Player) {
-            sf::Text skillText("Press [1] Skill 1, [2] Skill 2, [E] End Turn, [ESC] Exit", font, 28);
-            skillText.setPosition(500, 400);
-            window.draw(skillText);
-        } else {
-            sf::Text waitText("Opponent is thinking... Press [E] to continue.", font, 28);
-            waitText.setPosition(500, 400);
-            window.draw(waitText);
-        }
-
+        window.clear();
+        dungeon.render(window);
         window.display();
         return;
     }
+   
     window.display();
 }
 
