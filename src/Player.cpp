@@ -78,12 +78,11 @@ void Player::update() {
         sf::FloatRect bounds  = getBounds();
         position.x           += next_bounds.left - bounds.left;
         position.y           += next_bounds.top - bounds.top;
-        sprite.setPosition(position);
-    }
+        sprite.setPosition(position);    }
 }
 
 void Player::draw(sf::RenderWindow &window) {
     interact = collision.onInteractables(getBounds());
-    collision.draw(window, interact, true);
+    collision.draw(window, interact, false);
     window.draw(sprite);
 }

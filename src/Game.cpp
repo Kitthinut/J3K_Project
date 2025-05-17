@@ -1,9 +1,11 @@
 #include "Game.hpp"
+#include "UI/Introduction.hpp"
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-#include <SFML/Window.hpp>
+#include <SFML/Window.hpp>    
+
 
 Game::Game() {
     // Load background
@@ -75,11 +77,32 @@ void Game::processEvents() {
                 switch (player.GetInteract()) {
                     case Computor:
                         ui.popup_choice.open();
-                        ui.popup_choice.setChoices(
-                            {"Upgrade Stats", "Play Games"});
+                        ui.popup_choice.setChoices({"Enter Mini-Dungeon"});
+                        break;
+                    default: break;
+
+                    case Wardrobe:
+                        ui.popup_choice.open();
+                        ui.popup_choice.setChoices({"Upgrade Stats"});
                         break;
 
-                    default: break;
+                    case Dining:
+                        ui.popup_choice.open();
+                        ui.popup_choice.setChoices(
+                            {"[food left] Eat Food (+30 HP)",
+                             "Drink Water (+10 HP)", "Drink Potion"});
+                        break;
+
+                    case Bed:
+                        ui.popup_choice.open();
+                        ui.popup_choice.setChoices(
+                            {"Sleep (+50 HP)", "Nap (+20 HP)"});
+                        break;
+
+                    case Teacher_Table:
+                        ui.popup_choice.open();
+                        ui.popup_choice.setChoices({"Enter Class"});
+                        break;
                 }
             }
         }
@@ -145,6 +168,7 @@ void Game::update() {
 }
 
 void Game::render() {
+    
     window.clear();
     window.draw(background);
     player.draw(window);
@@ -153,9 +177,11 @@ void Game::render() {
 }
 
 void Game::run() {
+    introduction(window);
     while (window.isOpen()) {
         processEvents();
         update();
         render();
     }
+    show_credits(window);
 }
