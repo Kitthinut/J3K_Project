@@ -35,6 +35,12 @@ void UI::setBarsVolume(const Volume &hp, const Volume &mana, const Volume &exp) 
     bar_exp.setVolume(exp);
 }
 
+void UI::closePopUp() {
+    popup_character_info.close();
+    popup_choice.close();
+    popup_upgrade.close();
+}
+
 void UI::render(sf::RenderWindow &window) {
     // ==== Draw Coins ====
     text_coin.draw(window);

@@ -45,13 +45,15 @@ void Game::processEvents() {
         if (event.type != sf::Event::KeyPressed) break;
         const sf::Keyboard::Key key = event.key.code;
 
-        if (event.key.code == sf::Keyboard::C) {
+        if (key == sf::Keyboard::C) {
             // Toggle character info screen
             if (ui.popup_character_info.isOpen()) ui.popup_character_info.close();
             else ui.popup_character_info.open();
         }
 
-        if (event.key.code == sf::Keyboard::Space) {
+        if (key == sf::Keyboard::Escape) ui.closePopUp();
+
+        if (key == sf::Keyboard::Space) {
             if (ui.dialogue.isOpen()) {
                 ui.dialogue.continues();
             } else if (ui.popup_choice.isOpen()) {
@@ -84,24 +86,20 @@ void Game::processEvents() {
 
         // Handle choice navigation (Up/Down keys)
         if (ui.popup_choice.isOpen()) {
-            if (event.key.code == sf::Keyboard::Up)
-                ui.popup_choice.moveSelection(-1);
-            else if (event.key.code == sf::Keyboard::Down)
-                ui.popup_choice.moveSelection(1);
+            if (key == sf::Keyboard::Up) ui.popup_choice.moveSelection(-1);
+            else if (key == sf::Keyboard::Down) ui.popup_choice.moveSelection(1);
         }
 
         // Handle stat selection in the upgrade popup (Up/Down)
         if (ui.popup_upgrade.isOpen()) {
-            if (event.key.code == sf::Keyboard::Up)
-                ui.popup_upgrade.moveSelection(-1);
-            else if (event.key.code == sf::Keyboard::Down)
-                ui.popup_upgrade.moveSelection(1);
+            if (key == sf::Keyboard::Up) ui.popup_upgrade.moveSelection(-1);
+            else if (key == sf::Keyboard::Down) ui.popup_upgrade.moveSelection(1);
         }
 
         // Handle plus/minus for upgrading stats
         if (ui.popup_upgrade.isOpen()) {
             int selected = ui.popup_upgrade.getSelected();
-            if (event.key.code == sf::Keyboard::Left) {
+            if (key == sf::Keyboard::Left) {
                 if (selected == 0 && upgradePoints > 0) {
                     maxHP += 10;
                     upgradePoints--;
@@ -110,7 +108,7 @@ void Game::processEvents() {
                     upgradePoints--;
                 }
                 ui.popup_upgrade.close();
-            } else if (event.key.code == sf::Keyboard::Right) {
+            } else if (key == sf::Keyboard::Right) {
                 if (selected == 0 && maxHP > 0) {
                     maxHP -= 10;
                     upgradePoints++;

@@ -4,7 +4,7 @@
 
 Player::Player(sf::Vector2f position) {
     // Load player sprite
-    if (!texture.loadFromFile("assets/characters/temp-1.png")) {
+    if (!texture.loadFromFile("assets/characters/Spritesheet.png")) {
         std::cerr << "Failed to load sprite sheet!" << std::endl;
     }
     sprite.setScale(3.0f, 3.0f);
@@ -20,10 +20,10 @@ void Player::setPosition(sf::Vector2f position) {
 
 const sf::FloatRect Player::getBounds() {
     sf::FloatRect bounds = sprite.getGlobalBounds();
-    int           width  = bounds.width / 4;
-    int           height = bounds.height / 4;
+    int           width  = bounds.width / 6;
+    int           height = bounds.height / 6;
 
-    bounds.left   += width;
+    bounds.left   += width * 2;
     bounds.top    += bounds.height - height;
     bounds.width   = width * 2;
     bounds.height  = height;

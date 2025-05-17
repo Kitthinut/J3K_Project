@@ -30,19 +30,19 @@ class UI {
         std::vector<Text>        quest_texts;
 
         Bar bar_hp = {
-            "assets/ui/hp_bar_bg.png",
+            "assets/ui/HpBar.png",
             "assets/ui/hp_bar_fill.png",
             sf::Color::Red,
             {1700, 20}
         };
         Bar bar_mana = {
-            "assets/ui/mana_bar_bg.png",
+            "assets/ui/ManaBar.png",
             "assets/ui/mana_bar_fill.png",
             sf::Color::Blue,
             {1700, 50}
         };
         Bar bar_exp = {
-            "assets/ui/exp_bar_bg.png",
+            "assets/ui/ExpBar.png",
             "assets/ui/exp_bar_fill.png",
             sf::Color::Green,
             {1700, 80}
@@ -79,6 +79,8 @@ class UI {
         void setLevel(const int level);
         void setBarsVolume(const Volume &hp, const Volume &mana,
                            const Volume &exp);
+
+        void closePopUp();
 
         void render(sf::RenderWindow &window);
 };
