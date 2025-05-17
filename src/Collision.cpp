@@ -82,7 +82,8 @@ void Collision::loadObstacles() {
         {   0,    0,  180, 1080},
         {1770,    0,  150, 1080},
         { 660, 1040,  170,   40},
-        {1290,  830,  340,  200},
+        {1290,  900,  340,  200},
+        {1397,  839,  133,   63},
         {1050,  690,   80,  390},
         { 830, 1000,  220,   80},
         { 180, 1000,  480,   80},
@@ -121,9 +122,14 @@ void Collision::loadObstacles() {
 
     // Dorm Interactables
     room_interactables[Room::Dorm] = {
-        {{800, 600, 40, 40}, Computor},
+        {  {467, 592, 221, 39},   Dining},
+        {  {297, 459, 299, 42}, Wardrobe},
+        { {1250, 346, 55, 282},      Bed},
+        {{1297, 800, 326, 106}, Computor}
     };
 
     // Classroom Interactables
-    room_interactables[Room::Classroom] = {};
+    room_interactables[Room::Classroom] = {
+        {{799, 415, 329, 68}, Teacher_Table}
+    };
 }

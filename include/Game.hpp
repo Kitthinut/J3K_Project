@@ -4,6 +4,7 @@
 #include "Enum/Direction.hpp"
 #include "Enum/Room.hpp"
 #include "Player.hpp"
+#include "Story.hpp"
 #include "UI/UI.hpp"
 
 #include <functional>
@@ -19,6 +20,9 @@ class Game {
 
         // UI
         UI ui;
+
+        // Story Trailer
+        Story story;
 
         // Player
         Player player = {
@@ -37,18 +41,24 @@ class Game {
         int maxHP       = 100;
         int currentMana = 30;
         int maxMana     = 50;
-        int currentEXP  = 0;
-        int maxEXP      = 100;
+        int currentAtk  = 10;
+        int currentDef  = 5;
+        int currentExp  = 0;
+        int maxExp      = 100;
 
         // playerInfo
         std::string playerName = "Hero";
-        
+
         // Dungeon
         Dungeon dungeon;
-        bool inDungeonTest = false;
+        bool    inDungeonTest = false;
 
         void changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos);
-        
+        void statsCap();
+        void modifyStat(int direction);
+        void handleChoiceSelection();
+        void openPopupForInteraction();
+
         // Game loop helpers
         void processEvents();
         void update();
