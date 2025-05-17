@@ -4,11 +4,11 @@
 
 Bar::Bar(const std::string &bg, const std::string &fill, const sf::Color &color,
          const sf::Vector2f &pos) {
-    // if (!bgTexture.loadFromFile(bg) || !fillTexture.loadFromFile(fill)) {
-    // return;
-    // }
-    // bgSprite.setTexture(bgTexture);
-    // bgSprite.setPosition(pos);
+    if (!bgTexture.loadFromFile(bg)) {
+        return;
+    }
+    bgSprite.setTexture(bgTexture);
+    bgSprite.setPosition(pos);
     // fillSprite.setTexture(fillTexture);
     // fillSprite.setPosition(pos);
 
@@ -22,7 +22,9 @@ void Bar::setVolume(const Volume &volume) {
 }
 
 void Bar::draw(sf::RenderWindow &window) {
-    // window.draw(bgSprite);
-    // window.draw(fillSprite);
+    if (bgSprite.getTexture() == nullptr) return;
+
     window.draw(frontBar);
+    window.draw(fillSprite);
+    window.draw(bgSprite);
 }

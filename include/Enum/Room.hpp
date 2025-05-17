@@ -1,3 +1,3 @@
 #pragma once
 
-enum Room { Dorm, Classroom };
+enum Room { None, Dorm, Classroom };

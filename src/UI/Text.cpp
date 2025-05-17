@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-Text::Text(const unsigned int size, const sf::Color &color,
+Text::Text(const sf::Font &font, const unsigned int size, const sf::Color &color,
            const sf::Vector2f &position) {
+    text.setFont(font);
     text.setCharacterSize(size);
     text.setFillColor(color);
     setPosition(position);

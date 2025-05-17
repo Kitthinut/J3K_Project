@@ -9,7 +9,7 @@ BreakBeforeBraces: Attach
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 IndentCaseLabels: true
 IndentCaseBlocks: true
-ColumnLimit: 90
+ColumnLimit: 83
 IndentAccessModifiers: true
 NamespaceIndentation: All
 FixNamespaceComments: false

@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Bar.hpp"
+#include "Popup/CharacterInfo.hpp"
 #include "Popup/Choice.hpp"
+#include "Popup/DialogueBox.hpp"
+#include "Popup/Upgrade.hpp"
 #include "Text.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -16,10 +19,10 @@ class UI {
         int      level;
 
         Text text_coin = {
-            24, sf::Color::Yellow, {20, 20}
+            font, 24, sf::Color::Yellow, {20, 20}
         };
         Text text_level = {
-            20, sf::Color::White, {1640, 80}
+            font, 20, sf::Color::White, {1640, 80}
         };
 
         // Quest
@@ -49,13 +52,33 @@ class UI {
         UI();
 
         Choice popup_choice = {
-            {         600,           200},
-            {WINDOW_WIDTH, WINDOW_HEIGHT},
+            font,
+            {             600,               200},
+            {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
+        };
+
+        CharacterInfo popup_character_info = {
+            font,
+            {             600,               400},
+            {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
+        };
+
+        Upgrade popup_upgrade = {
+            font,
+            {             500,               300},
+            {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
+        };
+
+        DialogueBox dialogue = {
+            font,
+            {            1720,                 180},
+            {WINDOW_WIDTH / 2, WINDOW_HEIGHT - 130},
         };
 
         void setCoins(const int coins);
         void setLevel(const int level);
+        void setBarsVolume(const Volume &hp, const Volume &mana,
+                           const Volume &exp);
 
         void render(sf::RenderWindow &window);
-        void setBarVolume(const Volume &hp, const Volume &mana, const Volume &exp);
 };

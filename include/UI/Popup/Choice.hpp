@@ -1,35 +1,20 @@
 #pragma once
 
+#include "Popup.hpp"
+
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
 
-class Choice {
-    private:
-        sf::Vector2f size;
-        sf::Vector2f position;
-        sf::Vector2f max_position;
-
-        const sf::Font          *font;
+class Choice: public Popup {
+    protected:
         std::vector<std::string> choices;
-        std::vector<sf::Text>    choice_texts;
-        sf::RectangleShape       background;
-
-        const int PADDING = 20;
-
-        bool is_open  = false;
-        int  selected = 0;
+        int                      selected = 0;
 
     public:
-        Choice(const sf::Vector2f &size, const sf::Vector2f &max_position);
+        Choice(const sf::Font &font, const sf::Vector2f &size, const sf::Vector2f &position): Popup(font, size, position) {}
 
-        void open();
-
-        void close() { is_open = false; }
-
-        const bool isOpen() { return is_open; }
-
-        void setFont(const sf::Font &font) { this->font = &font; }
+        void open() override;
 
         void setChoices(const std::vector<std::string> choices);
 
@@ -39,5 +24,5 @@ class Choice {
 
         const int getSelected() { return selected; }
 
-        void render(sf::RenderWindow &window);
+        void render(sf::RenderWindow &window) override;
 };
