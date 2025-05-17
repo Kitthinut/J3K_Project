@@ -34,6 +34,112 @@ void Game::changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos) {
     player.getCollision().setCurrentRoom(room);
 }
 
+void Game::statsCap() {
+    currentHP   = currentHP > maxHP ? maxHP : currentHP;
+    currentMana = currentMana > maxMana ? maxMana : currentMana;
+}
+
+void Game::modifyStat(const int direction) {
+    if (upgradePoints <= 0 || direction == 0) return;
+
+    int delta = direction;
+    switch (ui.popup_upgrade.getSelected()) {
+        case 0:
+            if (direction == -1 && maxHP <= 10) delta = 0;
+            maxHP += delta * 10;
+            break;
+        case 1:
+            if (direction == -1 && maxMana <= 0) delta = 0;
+            maxMana += delta * 5;
+            break;
+        case 2:
+            if (direction == -1 && currentAtk <= 0) delta = 0;
+            currentAtk += delta * 5;
+            break;
+        case 3:
+            if (direction == -1 && currentDef <= 0) delta = 0;
+            currentDef += delta * 5;
+            break;
+    }
+
+    upgradePoints -= delta;
+    ui.popup_upgrade.close();
+}
+
+void Game::handleChoiceSelection() {
+    const int selected = ui.popup_choice.getSelected();
+    switch (player.GetInteract()) {
+        case Computor:
+            std::cout << "Enter Mini-Dungeon" << std::endl;
+            player.setMoveable(true);
+            break;
+        case Wardrobe:
+            std::cout << "You chose to upgrade stats!" << std::endl;
+            ui.popup_upgrade.open();
+            break;
+        case Dining:
+            std::cout << "Dining" << std::endl;
+            switch (selected) {
+                case 0 : currentHP += 30; break;
+                case 1 : currentMana += 10; break;
+                default: break;
+            }
+            player.setMoveable(true);
+            break;
+        case Bed:
+            std::cout << "Bed" << std::endl;
+            switch (selected) {
+                case 0 : currentHP += 50; break;
+                case 1 : currentHP += 20; break;
+                default: break;
+            }
+            player.setMoveable(true);
+            break;
+        case Teacher_Table:
+            std::cout << "You chose to play games!" << std::endl;
+            inDungeonTest = true;
+            dungeon.reset();
+            player.setMoveable(true);
+            break;
+        default: break;
+    }
+
+    // Hide the choice popup after selection
+    ui.popup_choice.close();
+}
+
+void Game::openPopupForInteraction() {
+    switch (player.GetInteract()) {
+        case Computor:
+            ui.popup_choice.open();
+            ui.popup_choice.setChoices({"Enter Mini-Dungeon"});
+            player.setMoveable(false);
+            break;
+        case Wardrobe:
+            ui.popup_choice.open();
+            ui.popup_choice.setChoices({"Upgrade Stats"});
+            player.setMoveable(false);
+            break;
+        case Dining:
+            ui.popup_choice.open();
+            ui.popup_choice.setChoices({"[food left] Eat Food (+30 HP)",
+                                        "Drink Water (+10 HP)", "Drink Potion"});
+            player.setMoveable(false);
+            break;
+        case Bed:
+            ui.popup_choice.open();
+            ui.popup_choice.setChoices({"Sleep (+50 HP)", "Nap (+20 HP)"});
+            player.setMoveable(false);
+            break;
+        case Teacher_Table:
+            ui.popup_choice.open();
+            ui.popup_choice.setChoices({"Enter Class"});
+            player.setMoveable(false);
+            break;
+        default: break;
+    }
+}
+
 void Game::processEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -45,89 +151,52 @@ void Game::processEvents() {
         if (inDungeonTest) {
             bool exitDungeonTest = false;
             dungeon.handleEvent(event, exitDungeonTest);
-            if (exitDungeonTest) {
-                inDungeonTest = false;
-            }
+            if (exitDungeonTest) inDungeonTest = false;
             return; // Skip normal event processing
         }
 
         if (event.type != sf::Event::KeyPressed) break;
         const sf::Keyboard::Key key = event.key.code;
 
-        if (key == sf::Keyboard::C) {
-            // Toggle character info screen
-            if (ui.popup_character_info.isOpen()) ui.popup_character_info.close();
-            else ui.popup_character_info.open();
+        switch (key) {
+            case sf::Keyboard::Escape:
+                player.setMoveable(true);
+                ui.closePopUp();
+                break;
+            case sf::Keyboard::C:
+                // Toggle character info screen
+                ui.popup_character_info.isOpen() ? ui.popup_character_info.close()
+                                                 : ui.popup_character_info.open();
+                break;
+            case sf::Keyboard::Space:
+                if (ui.dialogue.isOpen()) {
+                    ui.dialogue.continues();
+                } else if (ui.popup_choice.isOpen()) {
+                    handleChoiceSelection();
+                } else if (!ui.popUpIsOpen()) {
+                    openPopupForInteraction();
+                }
+                break;
+            default: break;
         }
 
-        if (key == sf::Keyboard::Escape) ui.closePopUp();
-
-        if (key == sf::Keyboard::Space) {
-            if (ui.dialogue.isOpen()) {
-                ui.dialogue.continues();
-            } else if (ui.popup_choice.isOpen()) {
-                // Apply the selected choice
-                switch (ui.popup_choice.getSelected()) {
-                    case 0:
-                        std::cout << "You chose to upgrade stats!" << std::endl;
-                        ui.popup_upgrade.open();
-                        break;
-                    case 1: // Dungeon Test
-                        std::cout << "You chose to play games!" << std::endl;
-                        inDungeonTest = true;
-                        dungeon.reset();
-                        break;
-                    default: break;
-                }
-
-                // Hide the choice popup after selection
-                ui.popup_choice.close();
-            } else if (!ui.popUpIsOpen()) {
-                switch (player.GetInteract()) {
-                    case Computor:
-                        ui.popup_choice.open();
-                        ui.popup_choice.setChoices(
-                            {"Upgrade Stats", "Play Games"});
-                        break;
-
-                    default: break;
-                }
+        // Handle choice navigation
+        if (ui.popup_choice.isOpen()) {
+            switch (key) {
+                case sf::Keyboard::Up  : ui.popup_choice.moveSelection(-1); break;
+                case sf::Keyboard::Down: ui.popup_choice.moveSelection(1); break;
+                default                : break;
             }
         }
 
-        // Handle choice navigation (Up/Down keys)
-        if (ui.popup_choice.isOpen()) {
-            if (key == sf::Keyboard::Up) ui.popup_choice.moveSelection(-1);
-            else if (key == sf::Keyboard::Down) ui.popup_choice.moveSelection(1);
-        }
-
-        // Handle stat selection in the upgrade popup (Up/Down)
+        // Handle stat selection in the upgrade popup
         if (ui.popup_upgrade.isOpen()) {
-            if (key == sf::Keyboard::Up) ui.popup_upgrade.moveSelection(-1);
-            else if (key == sf::Keyboard::Down) ui.popup_upgrade.moveSelection(1);
-        }
-
-        // Handle plus/minus for upgrading stats
-        if (ui.popup_upgrade.isOpen()) {
-            int selected = ui.popup_upgrade.getSelected();
-            if (key == sf::Keyboard::Right) {
-                if (selected == 0 && upgradePoints > 0) {
-                    maxHP += 10;
-                    upgradePoints--;
-                } else if (selected == 1 && upgradePoints > 0) {
-                    maxMana += 5;
-                    upgradePoints--;
-                }
-                ui.popup_upgrade.close();
-            } else if (key == sf::Keyboard::Left) {
-                if (selected == 0 && maxHP > 0) {
-                    maxHP -= 10;
-                    upgradePoints++;
-                } else if (selected == 1 && maxMana > 0) {
-                    maxMana -= 5;
-                    upgradePoints++;
-                }
-                ui.popup_upgrade.close();
+            switch (key) {
+                case sf::Keyboard::Up   : ui.popup_upgrade.moveSelection(-1); break;
+                case sf::Keyboard::Down : ui.popup_upgrade.moveSelection(1); break;
+                case sf::Keyboard::Right: modifyStat(1); break;
+                case sf::Keyboard::Left : modifyStat(-1); break;
+                default                 : break;
             }
         }
     }
@@ -140,12 +209,13 @@ void Game::update() {
     }
 
     // Update HP and Mana bars
+    statsCap();
     Volume hp   = {currentHP, maxHP};
     Volume mana = {currentMana, maxMana};
-    Volume exp  = {currentEXP, maxEXP};
+    Volume exp  = {currentExp, maxExp};
     ui.setBarsVolume(hp, mana, exp);
     ui.popup_character_info.update(playerName, 1, hp, mana, exp);
-    ui.popup_upgrade.update(currentHP, currentMana);
+    ui.popup_upgrade.update(hp, mana, currentAtk, currentDef);
 
     // Update Movement
     player.update();
@@ -175,9 +245,11 @@ void Game::render() {
 }
 
 void Game::run() {
+    story.introduction(window);
     while (window.isOpen()) {
         processEvents();
         update();
         render();
     }
+    story.showCredits(window);
 }

@@ -21,6 +21,7 @@ class Player {
         float       dt              = 0;
         int         current_frame   = 0;
         float       animation_timer = 0.0f;
+        bool        moveable        = true;
 
         Interact interact = Empty;
 
@@ -30,6 +31,8 @@ class Player {
 
     public:
         Player(sf::Vector2f position);
+
+        void setMoveable(bool moveable) { this->moveable = moveable; }
 
         void setPosition(sf::Vector2f position);
 
