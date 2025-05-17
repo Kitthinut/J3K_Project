@@ -3,6 +3,7 @@
 #include "DialogueBox.hpp"
 #include "Enum/Direction.hpp"
 #include "Enum/Room.hpp"
+#include "Dungeon.hpp"
 #include "Struct/Interactable.hpp"
 #include "UI/UI.hpp"
 
@@ -48,6 +49,10 @@ class Game {
 
         // Interactables
         std::vector<Interactable> interactables;
+        
+
+        // Dungeon
+        Dungeon dungeon;
 
         // Stats Popup
         bool showStatsPopup = false;
@@ -73,6 +78,9 @@ class Game {
         void processEvents();
         void update();
         void render();
+
+        //Dungeon Test
+        bool inDungeonTest = false;
 
     public:
         Game();

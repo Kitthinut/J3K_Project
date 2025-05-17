@@ -40,7 +40,7 @@ Game::Game() {
          .onInteract = [this]() {
              ui.popup_choice.open();
              ui.popup_choice.setChoices(
-                 {"Upgrade Stats", "Select side quests", "Play Games", "Go to sleep"});
+                 {"Upgrade Stats", "Select side quests", "Play Games","Dungeon Test", "Go to sleep"});
          }});
 
     // Load player sprite
@@ -60,6 +60,34 @@ void Game::processEvents() {
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) window.close();
 
+               // Dungeon Test input
+        if (inDungeonTest) {
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Escape) {
+                    inDungeonTest = false;
+                    dungeon.reset();
+                    return;
+                }
+                if (dungeon.getCurrentTurn() == Dungeon::Player) {
+                    if (event.key.code == sf::Keyboard::Num1) {
+                        // Player selects Skill 1 (no effect for now)
+                    }
+                    if (event.key.code == sf::Keyboard::Num2) {
+                        // Player selects Skill 2 (no effect for now)
+                    }
+                    if (event.key.code == sf::Keyboard::E) {
+                        dungeon.endTurn();
+                    }
+                } else {
+                    if (event.key.code == sf::Keyboard::E) {
+                        dungeon.endTurn(); // Opponent ends turn
+                    }
+                }
+            }
+            return; // Skip normal event processing
+        }
+
+
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::C) {
                 // Toggle character info screen
@@ -78,6 +106,13 @@ void Game::processEvents() {
                             std::cout << "You chose to play games!" << std::endl;
                             break;
                         case 2 : showStatsPopup = true; break;
+
+                        case 3: // Dungeon Test
+                            inDungeonTest = true;
+                            dungeon.reset();
+                            ui.popup_choice.close();
+                            break;
+                            
                         default: break;
                     }
 
@@ -112,7 +147,7 @@ void Game::processEvents() {
                                 // Show the choices (you could change this dynamically)
                                 ui.popup_choice.open();
                                 ui.popup_choice.setChoices(
-                                    {"Upgrade Stats", "Play Games", "Check Stats"});
+                                    {"Upgrade Stats", "Play Games", "Check Stats", "Dungeon Test"});
                             } else {
                                 obj.onInteract(); // Regular interaction
                             }
@@ -263,6 +298,12 @@ void Game::update() {
                             WINDOW_HEIGHT / backgroundTexture.getSize().y);
 
         dialogueBox.setText("You entered the lobby.");
+    }
+
+    if (inDungeonTest) {
+        // Only handle turn-based logic here
+        // For now, nothing happens except turn switching
+    return;
     }
 }
 
@@ -423,6 +464,38 @@ void Game::render() {
     //     }
     // }
 
+
+    if (inDungeonTest) {
+        // Draw a simple turn-based UI
+        sf::RectangleShape dungeonBG(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
+        dungeonBG.setFillColor(sf::Color(30, 30, 60, 255));
+        window.draw(dungeonBG);
+
+        sf::Font font;
+        font.loadFromFile("assets/fonts/Electrolize-Regular.ttf"); // Use your font path
+
+        sf::Text title("Dungeon Test Mode", font, 48);
+        title.setPosition(600, 100);
+        window.draw(title);
+
+        std::string turnStr = (dungeon.getCurrentTurn() == Dungeon::Player) ? "Player Turn" : "Opponent Turn";
+        sf::Text turnText(turnStr, font, 36);
+        turnText.setPosition(700, 200);
+        window.draw(turnText);
+
+        if (dungeon.getCurrentTurn() == Dungeon::Player) {
+            sf::Text skillText("Press [1] Skill 1, [2] Skill 2, [E] End Turn, [ESC] Exit", font, 28);
+            skillText.setPosition(500, 400);
+            window.draw(skillText);
+        } else {
+            sf::Text waitText("Opponent is thinking... Press [E] to continue.", font, 28);
+            waitText.setPosition(500, 400);
+            window.draw(waitText);
+        }
+
+        window.display();
+        return;
+    }
     window.display();
 }
 
