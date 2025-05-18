@@ -1,4 +1,4 @@
-#include<Iventory.hpp>
+#include<Inventory.hpp>
 
 void Inventory::addItem(Item *item, int quantity) {
     for (auto& slot : _itemsList) {
@@ -15,7 +15,6 @@ void Inventory::addItem(Item *item, int quantity) {
         std::cout << "Inventory is full!" << std::endl;
     }
 }
-
 
 void Inventory::removeItem(int index, int quantity) {
     if (index < 0 || index >= _itemsList.size()) {
@@ -51,4 +50,34 @@ void Inventory::useItem(int index, Entity& entity) {
     }
     _itemsList[index].getItem()->use(entity);
     removeItem(index, 1);
+}
+
+void Inventory::moveItemToNewInventory(int index, Inventory& newInventory) {
+    if (index < 0 || index >= _itemsList.size()) {
+        std::cout << "Invalid index!" << std::endl;
+        return;
+    }
+    if (_itemsList[index].isEmpty()) {
+        std::cout << "No item in the slot!" << std::endl;
+        return;
+    }
+    newInventory.addItem(_itemsList[index].getItem(), _itemsList[index].getQuantity());
+    deleteItem(index);
+}
+
+void Inventory::moveItemToNewInventory(int index, Inventory& newInventory, int quantity) {
+    if (index < 0 || index >= _itemsList.size()) {
+        std::cout << "Invalid index!" << std::endl;
+        return;
+    }
+    if (_itemsList[index].isEmpty()) {
+        std::cout << "No item in the slot!" << std::endl;
+        return;
+    }
+    if (_itemsList[index].getQuantity() < quantity) {
+        std::cout << "Not enough items in the slot!" << std::endl;
+        return;
+    }
+    newInventory.addItem(_itemsList[index].getItem(), quantity);
+    removeItem(index, quantity);
 }

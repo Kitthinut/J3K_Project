@@ -5,14 +5,15 @@
 
 #include <SFML/Graphics.hpp>
 
-// #include <Entity.hpp>
+#include <Entity.hpp>
+#include <Inventory.hpp>
 
 #define PLAYER_FRAME    64
 #define PLAYER_SPEED    200
 #define ANIMATION_SPEED 0.1
 
 // class Player : public Entity {
-class Player {
+class Player : public Entity {
     private:
         Collision     collision;
         sf::Vector2f  position;
@@ -38,8 +39,11 @@ class Player {
         int _gold; // The amount of gold the player has
         int _statePoint; // The number of skill points the player has
 
+        Inventory inventory; // The inventory of the player
+
     public:
         Player(sf::Vector2f position);
+        Player(sf::Vector2f position, std::string name, int maxHP, int currentHP, int maxMana, int currentMana, int attackPower, int defensePower, int level);;
 
         void setMoveable(bool moveable) { this->moveable = moveable; }
 

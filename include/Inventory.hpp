@@ -6,6 +6,7 @@ class Inventory{
         int _maxSize; // The maximum size of the inventory
         std::vector<slotItem> _itemsList; // The slots of the inventory
     public:
+        Inventory() = default; // Default constructor
         Inventory(int maxSize) : _maxSize(maxSize){}
         ~Inventory() = default;
 
@@ -14,11 +15,15 @@ class Inventory{
         slotItem getSlotItem(int index) const { return _itemsList[index]; }
         std::string getItmeName(int index) const { return _itemsList[index].getItem()->getName(); }
         int getItemQuantity(int index) const { return _itemsList[index].getQuantity(); }
+        void setMaxSize(int maxSize) { _maxSize = maxSize; }
+        
         void addItem(Item *item, int quantity);
         void removeItem(int index, int quantity);
         void deleteItem(int index);
         void useItem(int index, Entity& entity);
-
+        void moveItemToNewInventory(int index, Inventory& newInventory);
+        void moveItemToNewInventory(int index, Inventory& newInventory, int quantity);  
+        
         void showInventory() const {
             for(const auto& slot : _itemsList) {
                 if(!slot.isEmpty()) {

@@ -1,5 +1,4 @@
-#include "Skill.hpp"
-#include "Entity.hpp"
+#include <Skill.hpp>
 
 int Skill :: calculateDamage(Entity *user, Entity *target) {
             // Calculate the damage dealt by the skill

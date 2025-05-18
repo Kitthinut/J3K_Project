@@ -1,10 +1,9 @@
-#include "Entity.hpp"
-#include "Skill.hpp"
+#include <Entity.hpp>
 
 // Method to cast a skill on a target entity
 void Entity :: attack(Entity *target) {
-    int damage = _normalAttack.calculateDamage(this, target); // Calculate the damage dealt by the normal attack
-    target->setCurrentHP(target->getCurrentHP() - damage); // Apply the damage to the target
+    // int damage = _normalAttack->calculateDamage(this, target); // Calculate the damage dealt by the normal attack
+    target->setCurrentHP(target->getCurrentHP() - this->_attackPower); // Apply the damage to the target
 }
 void Entity :: castSkill(int skillIndex, Entity *target) {
     if (skillIndex < 0 || skillIndex >= 5 ) {

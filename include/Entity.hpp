@@ -1,3 +1,4 @@
+#pragma once
 #include <Skill.hpp>
 #include <iostream> // For std::cout and std::endl
 
@@ -19,7 +20,7 @@ class Entity{
         
         Skill *_skills[5]; // Array of skills available to the entity
         // Skill *_normalAttack = &normalAttack; // The normal attack skill of the entity
-        Skill _normalAttack(); // The normal attack skill of the entity
+        // Skill _normalAttack(); // The normal attack skill of the entity
     public : 
         Entity() = default; // Default constructor
         Entity(std::string name, int maxHP, int currentHP, int maxMana, int currentMana, int attackPower, int defensePower, int level) : 
