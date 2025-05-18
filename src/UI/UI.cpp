@@ -47,6 +47,7 @@ void UI::closePopUp() {
 }
 
 void UI::render(sf::RenderWindow &window) {
+
     // ==== Draw Coins ====
     text_coin.draw(window);
 

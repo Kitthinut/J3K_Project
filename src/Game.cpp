@@ -97,11 +97,12 @@ void Game::handleChoiceSelection() {
             player.setMoveable(true);
             break;
         case Teacher_Table:
-            std::cout << "You chose to play games!" << std::endl;
-            inDungeonTest = true;
-            dungeon.reset();
-            player.setMoveable(true);
-            break;
+            if (!inDungeonTest) {
+                std::cout << "You chose to play games!" << std::endl;
+                inDungeonTest = true;
+                dungeon.reset();
+                player.setMoveable(true);
+            }
         default: break;
     }
 
@@ -152,8 +153,10 @@ void Game::processEvents() {
         if (inDungeonTest) {
             bool exitDungeonTest = false;
             dungeon.handleEvent(event, exitDungeonTest);
-            if (exitDungeonTest) inDungeonTest = false;
-            return; // Skip normal event processing
+            if (exitDungeonTest) {
+                inDungeonTest = false;
+                return; // Skip normal event processing
+            }
         }
 
         if (event.type != sf::Event::KeyPressed) break;
