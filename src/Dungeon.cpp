@@ -55,7 +55,7 @@ void Dungeon::handleEvent(const sf::Event &event, bool &exitDungeonTest) {
             case BattlePhase::PlayerConfirm:
                 if (selectedSkillIndex != -1) {
                     lastActionMessage = "Player used \"" +
-                                        playerSkills[selectedSkillIndex].name +
+                                        playerSkills[selectedSkillIndex].getName() +
                                         "\"!";
                     bossHitFlash = true;
                     animClock.restart();
@@ -87,7 +87,7 @@ void Dungeon::update() {
     if (phase == BattlePhase::OpponentPick &&
         opponentPickClock.getElapsedTime().asSeconds() > opponentPickDelay) {
         lastActionMessage =
-            "Boss used \"" + playerSkills[selectedSkillIndex].name + "\"!";
+            "Boss used \"" + playerSkills[selectedSkillIndex].getName() + "\"!";
         playerHitFlash = true;
         animClock.restart();
         phase = BattlePhase::OpponentAttackAnim;
@@ -153,7 +153,7 @@ void Dungeon::render(sf::RenderWindow &window) {
         // Skill list
         std::string skillList = "Skills: ";
         for (size_t i = 0; i < playerSkills.size(); ++i) {
-            skillList += "[" + std::to_string(i + 1) + "] " + playerSkills[i].name;
+            skillList += "[" + std::to_string(i + 1) + "] " + playerSkills[i].getName();
             if (i != playerSkills.size() - 1) skillList += "  ";
         }
         drawCenteredBoxWithText(window, skillList, 1200, 80, 960, 800, font, 28,
@@ -162,7 +162,7 @@ void Dungeon::render(sf::RenderWindow &window) {
         // Show selected skill message if any
         if (selectedSkillIndex != -1) {
             std::string msg = "Player picked \"" +
-                              playerSkills[selectedSkillIndex].name +
+                              playerSkills[selectedSkillIndex].getName() +
                               "\". Press [E] to confirm.";
             drawCenteredBoxWithText(window, msg, 1000, 60, 960, 870, font, 28,
                                     sf::Color(0, 0, 0, 200), sf::Color::Yellow);
@@ -175,7 +175,7 @@ void Dungeon::render(sf::RenderWindow &window) {
         // Show selected skill and confirm prompt
         if (selectedSkillIndex != -1) {
             std::string msg =
-                "Selected: " + playerSkills[selectedSkillIndex].name +
+                "Selected: " + playerSkills[selectedSkillIndex].getName() +
                 ". Press [E] to confirm.";
             drawCenteredBoxWithText(window, msg, 1000, 60, 960, 800, font, 28,
                                     sf::Color(0, 0, 0, 200), sf::Color::Yellow);
@@ -184,7 +184,7 @@ void Dungeon::render(sf::RenderWindow &window) {
         // Show attack message
         if (selectedSkillIndex != -1) {
             std::string msg =
-                "Player used \"" + playerSkills[selectedSkillIndex].name + "\"!";
+                "Player used \"" + playerSkills[selectedSkillIndex].getName() + "\"!";
             drawCenteredBoxWithText(window, msg, 1000, 60, 960, 800, font, 28,
                                     sf::Color(0, 0, 0, 200), sf::Color::White);
         }
@@ -194,7 +194,7 @@ void Dungeon::render(sf::RenderWindow &window) {
     } else if (phase == BattlePhase::OpponentAttackAnim) {
         if (selectedSkillIndex != -1) {
             std::string msg =
-                "Boss used \"" + playerSkills[selectedSkillIndex].name + "\"!";
+                "Boss used \"" + playerSkills[selectedSkillIndex].getName() + "\"!";
             drawCenteredBoxWithText(window, msg, 1000, 60, 960, 800, font, 28,
                                     sf::Color(0, 0, 0, 200), sf::Color::Red);
         }
