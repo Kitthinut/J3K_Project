@@ -13,6 +13,7 @@ class slotItem {
         int getQuantity() const { return quantity; }
         
         void setItem(Item *item) { this->item = item; }
+        std::string getItemName() const { return item ? item->getName() : ""; }
         void setQuantity(int quantity) { this->quantity = quantity; }
         void addQuantity(int quantity) { this->quantity += quantity; }
         void removeQuantity(int quantity) { this->quantity -= quantity; }

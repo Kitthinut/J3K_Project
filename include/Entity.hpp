@@ -5,7 +5,7 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-class Skill; // Forward declaration of the Skill class
+class Skill;
 class Entity{
     private: 
         std::string _name; // The name of the entity
@@ -20,12 +20,12 @@ class Entity{
         
         Skill *_skills[5]; // Array of skills available to the entity
         // Skill *_normalAttack = &normalAttack; // The normal attack skill of the entity
-        // Skill _normalAttack(); // The normal attack skill of the entity
+        Skill _normalAttack(); // The normal attack skill of the entity
     public : 
         Entity() = default; // Default constructor
         Entity(std::string name, int maxHP, int currentHP, int maxMana, int currentMana, int attackPower, int defensePower, int level) : 
             _name(name), _maxHP(maxHP), _currentHP(currentHP), _maxMana(maxMana), _currentMana(currentMana), 
-            _attackPower(attackPower), _defensePower(defensePower), _level(level) {}
+            _attackPower(attackPower), _defensePower(defensePower), _level(level){}
         Entity(std::string name, int maxHP, int maxMana, int attackPower, int defensePower, int level) : 
             Entity(name, maxHP, maxHP, maxMana, maxMana, attackPower, defensePower, level){}
         ~Entity() = default;

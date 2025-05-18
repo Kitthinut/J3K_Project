@@ -13,6 +13,7 @@ class Inventory{
         int getMaxSize() const { return _maxSize; }
 
         slotItem getSlotItem(int index) const { return _itemsList[index]; }
+        std::vector<slotItem> getItemsList() const { return _itemsList; }
         std::string getItmeName(int index) const { return _itemsList[index].getItem()->getName(); }
         int getItemQuantity(int index) const { return _itemsList[index].getQuantity(); }
         void setMaxSize(int maxSize) { _maxSize = maxSize; }
@@ -27,7 +28,7 @@ class Inventory{
         void showInventory() const {
             for(const auto& slot : _itemsList) {
                 if(!slot.isEmpty()) {
-                    std::cout << "Item: " << slot.getItem()->getName() << ", Quantity: " << slot.getQuantity() << std::endl;
+                    std::cout << "Item: " << slot.getItemName() << ", Quantity: " << slot.getQuantity() << std::endl;
                 }
             }
         }
