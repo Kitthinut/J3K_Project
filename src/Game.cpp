@@ -99,10 +99,11 @@ void Game::handleChoiceSelection() {
         case Teacher_Table:
             if (!inDungeonTest) {
                 std::cout << "You chose to play games!" << std::endl;
+                dungeon.setPlayer(&player);
                 inDungeonTest = true;
                 dungeon.reset();
                 player.setMoveable(true);
-            }
+            }   break;
         default: break;
     }
 
