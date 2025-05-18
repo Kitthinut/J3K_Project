@@ -123,6 +123,15 @@ void PlayerAttackPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
                 player->setCurrentMana(newMana);
                 player->castSkill(idx, boss);
 
+                // Restore mana if Normal Attact
+                if (skill->getName() == "Normal Attact") {
+                    int restore = dungeon->getManaRestoreAmount();
+                    int maxMana = player->getMaxMana();
+                    int afterRestore =
+                        std::min(player->getCurrentMana() + restore, maxMana);
+                    player->setCurrentMana(afterRestore);
+                }
+
                 if (boss->getCurrentHP() <= 0) {
                     dungeon->showMessage("You win!");
                     dungeon->setGameEnded(true);

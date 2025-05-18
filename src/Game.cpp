@@ -99,11 +99,14 @@ void Game::handleChoiceSelection() {
         case Teacher_Table:
             if (!inDungeonTest) {
                 std::cout << "You chose to play games!" << std::endl;
+                player.setCurrentHP(currentHP);
+                player.setCurrentMana(currentMana);
                 dungeon.setPlayer(&player);
                 inDungeonTest = true;
                 dungeon.reset();
                 player.setMoveable(true);
-            }   break;
+            }
+            break;
         default: break;
     }
 
@@ -156,7 +159,14 @@ void Game::processEvents() {
             dungeon.handleEvent(event, exitDungeonTest);
             if (exitDungeonTest) {
                 inDungeonTest = false;
-                return; // Skip normal event processing
+                player.setMoveable(true);
+                currentHP   = player.getCurrentHP();
+                currentMana = player.getCurrentMana();
+                if (player.getCurrentHP() <= 0) {
+                    player.setCurrentHP(player.getMaxHP() / 2);
+                    currentHP = player.getCurrentHP();
+                }
+                return;
             }
         }
 

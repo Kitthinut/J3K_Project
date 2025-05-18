@@ -141,6 +141,12 @@ void Dungeon::render(sf::RenderWindow &window) {
 }
 
 void Dungeon::reset() {
+    gameEnded               = false; 
+    waitingForContinue      = false;
+    selectedSkillIndex      = -1;
+    pendingSkillIndex       = -1;
+    confirmNormalAtFullMana = false;
+
     currentTurn        = Person;
     phase              = Phase::Opening;
     turnCount          = 1;
@@ -150,6 +156,15 @@ void Dungeon::reset() {
     openingClock.restart();
     randomizeBossImage();
     setPhase(Phase::Opening);
+
+    // Reset boss stats
+    boss.setCurrentHP(boss.getMaxHP());
+
+    if (player) {
+        player->setCurrentMana(player->getMaxMana());
+    }
+
+    // Reset player stats
 }
 
 void Dungeon::setPhase(Phase newPhase) {
