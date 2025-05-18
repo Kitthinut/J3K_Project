@@ -62,6 +62,7 @@ void Game::modifyStat(const int direction) {
             break;
     }
 
+    player.setMoveable(true);
     upgradePoints -= delta;
     ui.popup_upgrade.close();
 }
