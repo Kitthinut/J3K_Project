@@ -7,10 +7,10 @@ class Dungeon;
 
 // Handler interface
 struct IBattlePhaseHandler {
-        virtual void handleEvent(Dungeon *dungeon, const sf::Event &, bool &) = 0;
-        virtual void update(Dungeon *dungeon)                                 = 0;
-        virtual void render(Dungeon *dungeon, sf::RenderWindow &, sf::Font &) = 0;
-        virtual ~IBattlePhaseHandler() = default;
+        virtual void handleEvent(Dungeon *, const sf::Event &, bool &) = 0;
+        virtual void update(Dungeon *)                                 = 0;
+        virtual void render(Dungeon *, sf::RenderWindow &, sf::Font &) = 0;
+        virtual ~IBattlePhaseHandler()                                 = default;
 };
 
 // Player selects a skill
@@ -31,11 +31,12 @@ struct PlayerAttackPhase: IBattlePhaseHandler {
 };
 
 // Opponent picks and attacks
-struct OpponentPickPhase: IBattlePhaseHandler {
-        void handleEvent(Dungeon *dungeon, const sf::Event &, bool &) override;
-        void update(Dungeon *dungeon) override;
-        void render(Dungeon *dungeon, sf::RenderWindow &window,
-                    sf::Font &font) override;
+struct OpponentPickPhase: public IBattlePhaseHandler {
+        void handleEvent(Dungeon *, const sf::Event &, bool &) override;
+        void update(Dungeon *) override;
+        void render(Dungeon *, sf::RenderWindow &, sf::Font &) override;
+
+        virtual ~OpponentPickPhase() override {}
 };
 
 struct OpponentAttackPhase: IBattlePhaseHandler {
@@ -43,4 +44,6 @@ struct OpponentAttackPhase: IBattlePhaseHandler {
         void update(Dungeon *dungeon) override;
         void render(Dungeon *dungeon, sf::RenderWindow &window,
                     sf::Font &font) override;
+
+        virtual ~OpponentAttackPhase() override {}
 };

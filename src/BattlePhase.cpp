@@ -8,6 +8,7 @@
 // Player picks a skill
 void PlayerPickPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
                                   bool &exit) {
+    if (dungeon->isGameEnded()) return;
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Escape) {
             exit = true;
@@ -109,6 +110,7 @@ void PlayerPickPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
 // Player attacks with selected skill
 void PlayerAttackPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
                                     bool &) {
+    if (dungeon->isGameEnded()) return;
     if (dungeon->isWaitingForContinue() && event.type == sf::Event::KeyPressed &&
         event.key.code == sf::Keyboard::Space) {
         Player *player = dungeon->getPlayer();
@@ -117,10 +119,15 @@ void PlayerAttackPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
         if (player && boss && idx >= 0 && idx < 5) {
             Skill *skill = player->getSkill(idx);
             if (skill) {
-                // Deduct mana
                 int newMana = player->getCurrentMana() - skill->getManaCost();
                 player->setCurrentMana(newMana);
                 player->castSkill(idx, boss);
+
+                if (boss->getCurrentHP() <= 0) {
+                    dungeon->showMessage("You win!");
+                    dungeon->setGameEnded(true);
+                    return;
+                }
             }
         }
         dungeon->setWaitingForContinue(false);
@@ -129,6 +136,7 @@ void PlayerAttackPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
 }
 
 void PlayerAttackPhase::update(Dungeon *dungeon) {
+    if (dungeon->isGameEnded()) return;
     if (!dungeon->isWaitingForContinue()) {
         // Trigger animation only, don't apply damage yet
         dungeon->triggerBossHitFlash();
@@ -144,25 +152,18 @@ void PlayerAttackPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
 }
 
 // Opponent picks a skill (random)
-void OpponentPickPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
-                                    bool &) {
-    if (dungeon->isWaitingForContinue() && event.type == sf::Event::KeyPressed &&
-        event.key.code == sf::Keyboard::Space) {
-        dungeon->setWaitingForContinue(false);
-        dungeon->setPhase(Dungeon::Phase::OpponentAttack);
-    }
-}
-
 void OpponentPickPhase::update(Dungeon *dungeon) {
+    if (dungeon->isGameEnded()) return;
     if (!dungeon->isWaitingForContinue()) {
         Entity *boss   = dungeon->getBoss();
         Player *player = dungeon->getPlayer();
         if (boss && player) {
-            boss->attack(player); // Normal attack
-            int newMana = std::min(player->getCurrentMana() +
-                                       dungeon->getManaRestoreAmount(),
-                                   player->getMaxMana());
-            player->setCurrentMana(newMana);
+            boss->attack(player);
+            if (player->getCurrentHP() <= 0) {
+                dungeon->showMessage("You lose!");
+                dungeon->setGameEnded(true);
+                return;
+            }
         }
         dungeon->setWaitingForContinue(true);
     }
@@ -175,12 +176,21 @@ void OpponentPickPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
         32, sf::Color(0, 0, 0, 200), sf::Color::Red);
 }
 
-// Opponent attacks
+void OpponentPickPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
+                                    bool &) {
+    if (dungeon->isGameEnded()) return;
+    if (dungeon->isWaitingForContinue() && event.type == sf::Event::KeyPressed &&
+        event.key.code == sf::Keyboard::Space) {
+        dungeon->setWaitingForContinue(false);
+        dungeon->setPhase(Dungeon::Phase::PlayerPick);
+    }
+}
+
+// OpponentAttackPhase implementations
 void OpponentAttackPhase::handleEvent(Dungeon *, const sf::Event &, bool &) {}
 
 void OpponentAttackPhase::update(Dungeon *dungeon) {
-    // After showing the attack message, go back to player pick phase
-    // You can add animation logic here if you want a delay
+    if (dungeon->isGameEnded()) return;
     dungeon->setPhase(Dungeon::Phase::PlayerPick);
 }
 

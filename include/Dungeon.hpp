@@ -66,6 +66,10 @@ class Dungeon {
                 bossHitFlash = false;
         }
 
+        void setGameEnded(bool val) { gameEnded = val; }
+
+        bool isGameEnded() const { return gameEnded; }
+
         // UI helpers
 
         void showMessage(const std::string &msg);
@@ -89,6 +93,7 @@ class Dungeon {
         float     bossHitFlashDuration    = 0.3f;
         bool      waitingForContinue      = false;
         bool      confirmNormalAtFullMana = false;
+        bool      gameEnded               = false;
 
         // Entities
         Player *player;

@@ -36,13 +36,20 @@ void Dungeon::setPlayer(Player *p) {
 void Dungeon::handleEvent(const sf::Event &event, bool &exitDungeonTest) {
     // If the dialogue is open, let it handle input and block phase input
     if (ui.dialogue.isOpen()) {
-        // For example, close dialogue on SPACE
         if (event.type == sf::Event::KeyPressed &&
             event.key.code == sf::Keyboard::Space) {
             ui.dialogue.continues();
         }
         return;
     }
+
+    // Allow ESC to exit if game ended
+    if (isGameEnded() && event.type == sf::Event::KeyPressed &&
+        event.key.code == sf::Keyboard::Escape) {
+        exitDungeonTest = true;
+        return;
+    }
+
     if (currentPhaseHandler)
         currentPhaseHandler->handleEvent(this, event, exitDungeonTest);
 }
