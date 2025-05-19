@@ -4,7 +4,6 @@
 #include "Enum/Room.hpp"
 #include "Player.hpp"
 #include "UI/UI.hpp"
-#include "Struct/CollisionManager.hpp"
 
 #include <functional>
 #include <SFML/Graphics.hpp>
@@ -44,8 +43,6 @@ class Game {
         std::string playerName = "Hero";
 
         void changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos);
-
-        CollisionManager collisionManager;
 
         // Game loop helpers
         void processEvents();

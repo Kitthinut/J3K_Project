@@ -8,7 +8,16 @@
 
 
 Game::Game() {
-    // Load background
+
+    // Game's icon
+    sf::Image icon;
+    if (icon.loadFromFile("assets/ui/icon_game.png")) {
+        window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    }
+
+    window.setFramerateLimit(60);
+
+    // Load backgroundca
     if (!backgroundTexture.loadFromFile("assets/background/Dorm.png")) {
         std::cerr << "Failed to load background texture!" << std::endl;
     }
@@ -177,6 +186,7 @@ void Game::render() {
 }
 
 void Game::run() {
+    show_credits(window);
     introduction(window);
     while (window.isOpen()) {
         processEvents();
