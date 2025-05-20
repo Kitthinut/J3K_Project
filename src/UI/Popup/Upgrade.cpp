@@ -5,7 +5,7 @@
 Upgrade::Upgrade(const sf::Font &font, const sf::Vector2f &size,
                  const sf::Vector2f &position)
     : Choice(font, size, position) {
-    choices = {"HP: ", "Mana: "};
+    choices = {"HP: ", "Mana: ", "ATK: ", "DEF: "};
 
     int plus_positon  = position.x + (size.x / 2) - BUTTON_SIZE.x - PADDING;
     int minus_positon = plus_positon - 15 - BUTTON_SIZE.x;
@@ -37,9 +37,11 @@ void Upgrade::createButton(const char sign, const sf::Color &color, const float 
     button_texts.push_back(text);
 }
 
-void Upgrade::update(int hp, int mana) {
-    texts[0].setString(choices[0] + std::to_string(hp));
-    texts[1].setString(choices[1] + std::to_string(mana));
+void Upgrade::update(const Volume &hp, const Volume &mana, const int atk, const int def) {
+    texts[0].setString(choices[0] + std::to_string(hp.current) + " / " + std::to_string(hp.max));
+    texts[1].setString(choices[1] + std::to_string(mana.current) + " / " + std::to_string(mana.max));
+    texts[2].setString(choices[2] + std::to_string(atk));
+    texts[3].setString(choices[3] + std::to_string(def));
 }
 
 void Upgrade::render(sf::RenderWindow &window) {

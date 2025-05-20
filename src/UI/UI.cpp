@@ -35,6 +35,11 @@ void UI::setBarsVolume(const Volume &hp, const Volume &mana, const Volume &exp) 
     bar_exp.setVolume(exp);
 }
 
+bool UI::popUpIsOpen() {
+    return popup_character_info.isOpen() || popup_choice.isOpen() ||
+           popup_upgrade.isOpen();
+}
+
 void UI::closePopUp() {
     popup_character_info.close();
     popup_choice.close();

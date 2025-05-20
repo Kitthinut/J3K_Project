@@ -71,6 +71,8 @@ Room Player::warpTo() { return collision.hitWarps(getBounds()); }
 void Player::update() {
     sf::Time deltaTime = clock.restart();
     dt                 = deltaTime.asSeconds();
+
+    if (!moveable) return;
     movement();
 
     bool hit_obstacles = collision.hitObstacles(getNextBounds());

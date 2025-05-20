@@ -80,6 +80,7 @@ class UI {
         void setBarsVolume(const Volume &hp, const Volume &mana,
                            const Volume &exp);
 
+        bool popUpIsOpen();
         void closePopUp();
 
         void render(sf::RenderWindow &window);
