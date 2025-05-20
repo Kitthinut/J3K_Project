@@ -48,6 +48,11 @@ void UI::closePopUp() {
 
 void UI::render(sf::RenderWindow &window) {
 
+    // ==== Draw Dialogue Box ====
+    dialogue.render(window);
+
+    if (_dungeon) return;
+
     // ==== Draw Coins ====
     text_coin.draw(window);
 
@@ -58,9 +63,6 @@ void UI::render(sf::RenderWindow &window) {
     for (Text &text_quest : quest_texts) {
         text_quest.draw(window);
     }
-
-    // ==== Draw Dialogue Box ====
-    dialogue.render(window);
 
     // ==== Draw Bar ====
     bar_hp.draw(window);

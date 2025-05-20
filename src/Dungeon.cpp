@@ -5,9 +5,9 @@
 #include <random>
 #include <SFML/Graphics.hpp>
 
-Dungeon::Dungeon()
-    : currentTurn(Person), phase(Phase::Opening), turnCount(1),
-      selectedSkillIndex(-1), player(nullptr),
+Dungeon::Dungeon(UI &ui, Player &player)
+    : ui(&ui), player(&player), currentTurn(Person), phase(Phase::Opening), turnCount(1),
+      selectedSkillIndex(-1),
       boss("Boss", 200, 200, 100, 100, 30, 10, 1), bossHitFlash(false),
       playerHitFlash(false), openingDuration(1.5f), currentPhaseHandler(nullptr) {
     // Load background
@@ -21,24 +21,12 @@ Dungeon::Dungeon()
     setPhase(Phase::Opening);
 }
 
-void Dungeon::setPlayer(Player *p) {
-    player = p;
-    // Example: Give player 5 skills
-    // Skill(std::string name,int manaCost, int cooldown, int baseDamage, float
-    // ratioPlayerAtk, int pierceRate) :
-    player->setSkill(0, new Skill("Normal Attact", 0, 0, 30, 1.0f, 0));
-    player->setSkill(1, new Skill("Ice Spike", 8, 0, 20, 1.0f, 0));
-    player->setSkill(2, new Skill("Thunder", 12, 0, 35, 1.0f, 0));
-    player->setSkill(3, new Skill("Heal", 15, 0, -25, 1.0f, 0));
-    player->setSkill(4, new Skill("Slash", 5, 0, 15, 1.0f, 0));
-}
-
 void Dungeon::handleEvent(const sf::Event &event, bool &exitDungeonTest) {
     // If the dialogue is open, let it handle input and block phase input
-    if (ui.dialogue.isOpen()) {
+    if (ui->dialogue.isOpen()) {
         if (event.type == sf::Event::KeyPressed &&
             event.key.code == sf::Keyboard::Space) {
-            ui.dialogue.continues();
+            ui->dialogue.continues();
         }
         return;
     }
@@ -121,7 +109,7 @@ void Dungeon::render(sf::RenderWindow &window) {
     if (currentPhaseHandler) currentPhaseHandler->render(this, window, font);
 
     // UI
-    ui.render(window);
+    ui->render(window);
 
     if (player) {
         std::string playerHpStr =
@@ -227,6 +215,6 @@ void Dungeon::randomizeBossImage() {
 }
 
 void Dungeon::showMessage(const std::string &msg) {
-    ui.dialogue.setText(msg);
-    ui.dialogue.open();
+    ui->dialogue.setText(msg);
+    ui->dialogue.open();
 }

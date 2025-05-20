@@ -17,6 +17,7 @@ class UI {
     private:
         sf::Font font;
         int      level;
+        bool     _dungeon = false;
 
         Text text_coin = {
             font, 24, sf::Color::Yellow, {20, 20}
@@ -79,6 +80,8 @@ class UI {
         void setLevel(const int level);
         void setBarsVolume(const Volume &hp, const Volume &mana,
                            const Volume &exp);
+
+        void setDungeon(bool dungeon) { _dungeon = dungeon; }
 
         bool popUpIsOpen();
         void closePopUp();

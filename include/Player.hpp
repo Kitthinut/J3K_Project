@@ -15,17 +15,17 @@
 // class Player : public Entity {
 class Player : public Entity {
     private:
-        Collision     collision;
-        sf::Vector2f  position;
-        sf::FloatRect next_bounds;
+        Collision     _collision;
+        sf::Vector2f  _position;
+        sf::FloatRect _next_bounds;
 
-        sf::Clock   clock;
-        sf::Sprite  sprite;
-        sf::Texture texture;
-        float       dt              = 0;
-        int         current_frame   = 0;
-        float       animation_timer = 0.0f;
-        bool        moveable        = true;
+        sf::Clock   _clock;
+        sf::Sprite  _sprite;
+        sf::Texture _texture;
+        float       _dt              = 0;
+        int         _current_frame   = 0;
+        float       _animation_timer = 0.0f;
+        bool        _moveable        = true;
 
         Interact interact = Empty;
 
@@ -39,21 +39,23 @@ class Player : public Entity {
         int _gold; // The amount of gold the player has
         int _statePoint; // The number of skill points the player has
 
-        Inventory inventory; // The inventory of the player
+        Inventory _inventory; // The inventory of the player
 
     public:
-        Player(sf::Vector2f position);
         Player(sf::Vector2f position, std::string name, int maxHP, int currentHP, int maxMana, int currentMana, int attackPower, int defensePower, int level);;
 
-        void setMoveable(bool moveable) { this->moveable = moveable; }
+        int getEXP() const { return _EXP; }
+        int getEXPtoNextLevel() const { return _EXPtoNextLevel; }
+        
+        void setMoveable(bool moveable) { _moveable = moveable; }
 
         void setPosition(sf::Vector2f position);
 
         const sf::FloatRect getBounds();
 
-        const sf::FloatRect &getNextBounds() { return next_bounds; }
+        const sf::FloatRect &getNextBounds() { return _next_bounds; }
 
-        Collision &getCollision() { return collision; }
+        Collision &getCollision() { return _collision; }
 
         Interact GetInteract() { return interact; }
 

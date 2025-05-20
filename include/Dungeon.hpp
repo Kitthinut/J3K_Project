@@ -20,7 +20,7 @@ class Dungeon {
             End
         };
 
-        Dungeon();
+        Dungeon(UI &ui, Player &player);
         void handleEvent(const sf::Event &event, bool &exitDungeonTest);
         void update();
         void render(sf::RenderWindow &window);
@@ -42,7 +42,6 @@ class Dungeon {
         bool isConfirmNormalAtFullMana() const { return confirmNormalAtFullMana; }
 
         // Setters
-        void setPlayer(Player *p);
         void setPhase(Phase newPhase);
 
         void setPendingSkillIndex(int idx) { pendingSkillIndex = idx; }
@@ -96,11 +95,11 @@ class Dungeon {
         bool      gameEnded               = false;
 
         // Entities
-        Player *player;
+        Player *player = nullptr;
         Entity  boss;
 
         // UI
-        UI ui;
+        UI *ui = nullptr;
 
         // Graphics
         sf::Texture backgroundTexture;

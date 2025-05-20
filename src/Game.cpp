@@ -42,31 +42,26 @@ void Game::changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos) {
     player.getCollision().setCurrentRoom(room);
 }
 
-void Game::statsCap() {
-    currentHP   = currentHP > maxHP ? maxHP : currentHP;
-    currentMana = currentMana > maxMana ? maxMana : currentMana;
-}
-
 void Game::modifyStat(const int direction) {
-    if (upgradePoints <= 0 || direction == 0) return;
+    if ((direction > 0 && upgradePoints <= 0) || direction == 0) return;
 
     int delta = direction;
     switch (ui.popup_upgrade.getSelected()) {
         case 0:
-            if (direction == -1 && maxHP <= 10) delta = 0;
-            maxHP += delta * 10;
+            if (direction == -1 && player.getMaxHP() <= 10) delta = 0;
+            player.increaseMaxHP(delta * 10);
             break;
         case 1:
-            if (direction == -1 && maxMana <= 0) delta = 0;
-            maxMana += delta * 5;
+            if (direction == -1 && player.getMaxMana() <= 0) delta = 0;
+            player.increaseMaxMana(delta * 5);
             break;
         case 2:
-            if (direction == -1 && currentAtk <= 0) delta = 0;
-            currentAtk += delta * 5;
+            if (direction == -1 && player.getAttackPower() <= 0) delta = 0;
+            player.increaseAttackPower(delta * 5);
             break;
         case 3:
-            if (direction == -1 && currentDef <= 0) delta = 0;
-            currentDef += delta * 5;
+            if (direction == -1 && player.getDefensePower() <= 0) delta = 0;
+            player.increaseDefensePower(delta * 5);
             break;
     }
 
@@ -89,8 +84,8 @@ void Game::handleChoiceSelection() {
         case Dining:
             std::cout << "Dining" << std::endl;
             switch (selected) {
-                case 0 : currentHP += 30; break;
-                case 1 : currentMana += 10; break;
+                case 0 : player.increaseCurrentHP(30); break;
+                case 1 : player.increaseCurrentMana(10); break;
                 default: break;
             }
             player.setMoveable(true);
@@ -98,8 +93,8 @@ void Game::handleChoiceSelection() {
         case Bed:
             std::cout << "Bed" << std::endl;
             switch (selected) {
-                case 0 : currentHP += 50; break;
-                case 1 : currentHP += 20; break;
+                case 0 : player.increaseCurrentHP(50); break;
+                case 1 : player.increaseCurrentHP(20); break;
                 default: break;
             }
             player.setMoveable(true);
@@ -107,11 +102,9 @@ void Game::handleChoiceSelection() {
         case Teacher_Table:
             if (!inDungeonTest) {
                 std::cout << "You chose to play games!" << std::endl;
-                player.setCurrentHP(currentHP);
-                player.setCurrentMana(currentMana);
-                dungeon.setPlayer(&player);
                 inDungeonTest = true;
                 dungeon.reset();
+                ui.setDungeon(true);
                 player.setMoveable(true);
             }
             break;
@@ -167,15 +160,15 @@ void Game::processEvents() {
             dungeon.handleEvent(event, exitDungeonTest);
             if (exitDungeonTest) {
                 inDungeonTest = false;
+                ui.setDungeon(false);
+
                 player.setMoveable(true);
-                currentHP   = player.getCurrentHP();
-                currentMana = player.getCurrentMana();
                 if (player.getCurrentHP() <= 0) {
                     player.setCurrentHP(player.getMaxHP() / 2);
-                    currentHP = player.getCurrentHP();
                 }
                 return;
             }
+            break;
         }
 
         if (event.type != sf::Event::KeyPressed) break;
@@ -232,13 +225,13 @@ void Game::update() {
     }
 
     // Update HP and Mana bars
-    statsCap();
-    Volume hp   = {currentHP, maxHP};
-    Volume mana = {currentMana, maxMana};
-    Volume exp  = {currentExp, maxExp};
+    Volume hp   = {player.getCurrentHP(), player.getMaxHP()};
+    Volume mana = {player.getCurrentMana(), player.getMaxMana()};
+    Volume exp  = {player.getEXP(), player.getEXPtoNextLevel()};
     ui.setBarsVolume(hp, mana, exp);
     ui.popup_character_info.update(playerName, 1, hp, mana, exp);
-    ui.popup_upgrade.update(hp, mana, currentAtk, currentDef);
+    ui.popup_upgrade.update(hp, mana, player.getAttackPower(),
+                            player.getDefensePower());
 
     // Update Movement
     player.update();
@@ -268,7 +261,7 @@ void Game::render() {
 }
 
 void Game::run() {
-    story.introduction(window);
+    // story.introduction(window);
     while (window.isOpen()) {
         processEvents();
         update();

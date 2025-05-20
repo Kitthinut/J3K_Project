@@ -68,17 +68,32 @@ class Entity {
         }
 
         // Setters for the entity attributes
+
+        // Increase max HP by a specified amount
+        void increaseMaxHP(int amount) { _maxHP += amount; }
+
+        // Increase max mana by a specified amount
+        void increaseMaxMana(int amount) { _maxMana += amount; }
+
+        void increaseAttackPower(int amount) {
+            _attackPower += amount;
+        } // Increase attack power by a specified amount
+
+        void increaseDefensePower(int amount) {
+            _defensePower += amount;
+        } // Increase defense power by a specified amount
+
         void setCurrentHP(int currentHP) { _currentHP = currentHP; }
 
-        void decreaseCurrentHP(int amount) {
-            _currentHP -= amount;
-        } // Decrease current HP by a specified amount
+        void increaseCurrentHP(int amount) {
+            _currentHP += _currentHP > _maxHP ? 0 : amount;
+        } // Increase current HP by a specified amount
 
         void setCurrentMana(int currentMana) { _currentMana = currentMana; }
 
-        void decreaseCurrentMana(int amount) {
-            _currentMana -= amount;
-        } // Decrease current mana by a specified amount
+        void increaseCurrentMana(int amount) {
+            _currentMana += _currentMana > _maxMana ? 0 : amount;
+        } // Increase current mana by a specified amount
 
         void setSkill(int index, Skill *skill) {
             _skills[index] = skill;
