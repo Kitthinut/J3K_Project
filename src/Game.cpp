@@ -1,14 +1,11 @@
 #include "Game.hpp"
-#include "UI/Introduction.hpp"
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-#include <SFML/Window.hpp>    
-
+#include <SFML/Window.hpp>
 
 Game::Game() {
-
     // Game's icon
     sf::Image icon;
     if (icon.loadFromFile("assets/ui/icon_game.png")) {
@@ -243,7 +240,6 @@ void Game::update() {
 }
 
 void Game::render() {
-    
     window.clear();
 
     if (inDungeonTest) {
