@@ -1,125 +1,73 @@
 #include "Dungeon.hpp"
 
-#include "Skill.hpp"
+#include <filesystem>
+#include <iostream>
+#include <random>
+#include <SFML/Graphics.hpp>
 
-Dungeon::Dungeon(): currentTurn(Player) {
-    if (!backgroundTexture.loadFromFile("assets/background/Dungeon.png")) {
-        std::cerr << "Failed to load dungeon background!" << std::endl;
-    }
+Dungeon::Dungeon()
+    : currentTurn(Person), phase(Phase::Opening), turnCount(1),
+      selectedSkillIndex(-1), player(nullptr),
+      boss("Boss", 200, 200, 100, 100, 30, 10, 1), bossHitFlash(false),
+      playerHitFlash(false), openingDuration(1.5f), currentPhaseHandler(nullptr) {
+    // Load background
+    backgroundTexture.loadFromFile("assets/background/Dungeon.png");
     backgroundSprite.setTexture(backgroundTexture);
 
-    float scaleX = 1920.0f / backgroundTexture.getSize().x;
-    float scaleY = 1080.0f / backgroundTexture.getSize().y;
-    backgroundSprite.setScale(scaleX, scaleY);
+    // Random boss image
+    randomizeBossImage();
 
-    // Dummy Skill for testing
-    playerSkills = {SkillDB::FireBall, SkillDB::IceSpike, SkillDB::Heal,
-                    SkillDB::Thunder, SkillDB::WindSlash};
+    // Set initial phase
+    setPhase(Phase::Opening);
+}
 
-    // --- Boss image ---
-    if (!bossTexture.loadFromFile("assets/dungeon/Boss/Calculus.png")) {
-        std::cerr << "Failed to load boss image!" << std::endl;
-    }
-
-    bossSprite.setTexture(bossTexture);
-    bossSprite.setScale(0.7f, 0.7f);   // Adjust scale as needed
-    bossSprite.setPosition(1400, 300); // Adjust position as needed
-
-    phase = BattlePhase::Opening;
-    openingClock.restart();
+void Dungeon::setPlayer(Player *p) {
+    player = p;
+    // Example: Give player 5 skills
+    // Skill(std::string name,int manaCost, int cooldown, int baseDamage, float
+    // ratioPlayerAtk, int pierceRate) :
+    player->setSkill(0, new Skill("Normal Attact", 0, 0, 30, 1.0f, 0));
+    player->setSkill(1, new Skill("Ice Spike", 8, 0, 20, 1.0f, 0));
+    player->setSkill(2, new Skill("Thunder", 12, 0, 35, 1.0f, 0));
+    player->setSkill(3, new Skill("Heal", 15, 0, -25, 1.0f, 0));
+    player->setSkill(4, new Skill("Slash", 5, 0, 15, 1.0f, 0));
 }
 
 void Dungeon::handleEvent(const sf::Event &event, bool &exitDungeonTest) {
-    if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Escape) {
-            exitDungeonTest = true;
-            reset();
-            return;
-        }
-
-        switch (phase) {
-            case BattlePhase::PlayerPick:
-                if (event.key.code >= sf::Keyboard::Num1 &&
-                    event.key.code <= sf::Keyboard::Num5) {
-                    int skillIndex = event.key.code - sf::Keyboard::Num1;
-                    if (skillIndex < playerSkills.size()) {
-                        selectedSkillIndex = skillIndex;
-                        // Do NOT set lastActionMessage here!
-                    }
-                }
-                if (event.key.code == sf::Keyboard::E &&
-                    selectedSkillIndex != -1) {
-                    phase = BattlePhase::PlayerConfirm;
-                }
-                break;
-            case BattlePhase::PlayerConfirm:
-                if (selectedSkillIndex != -1) {
-                    lastActionMessage = "Player used \"" +
-                                        playerSkills[selectedSkillIndex].name +
-                                        "\"!";
-                    bossHitFlash = true;
-                    animClock.restart();
-                    phase = BattlePhase::PlayerAttackAnim;
-                }
-                break;
-            case BattlePhase::OpponentPick:
-                // Do nothing, handled by update() with a delay
-                break;
-            default: break;
-        }
-    }
-}
-
-void Dungeon::update() {
-
-    if (phase == BattlePhase::Opening) {
-        if (openingClock.getElapsedTime().asSeconds() > openingDuration) {
-            phase = BattlePhase::PlayerPick;
+    // If the dialogue is open, let it handle input and block phase input
+    if (ui.dialogue.isOpen()) {
+        if (event.type == sf::Event::KeyPressed &&
+            event.key.code == sf::Keyboard::Space) {
+            ui.dialogue.continues();
         }
         return;
     }
-    if (phase == BattlePhase::PlayerAttackAnim &&
-        animClock.getElapsedTime().asSeconds() > animDuration) {
-        bossHitFlash = false;
-        phase        = BattlePhase::OpponentPick;
-        opponentPickClock.restart(); // Start the boss "thinking" timer
+
+    // Allow ESC to exit if game ended
+    if (isGameEnded() && event.type == sf::Event::KeyPressed &&
+        event.key.code == sf::Keyboard::Escape) {
+        exitDungeonTest = true;
+        return;
     }
-    if (phase == BattlePhase::OpponentPick &&
-        opponentPickClock.getElapsedTime().asSeconds() > opponentPickDelay) {
-        lastActionMessage =
-            "Boss used \"" + playerSkills[selectedSkillIndex].name + "\"!";
-        playerHitFlash = true;
-        animClock.restart();
-        phase = BattlePhase::OpponentAttackAnim;
+
+    if (currentPhaseHandler)
+        currentPhaseHandler->handleEvent(this, event, exitDungeonTest);
+}
+
+void Dungeon::update() {
+    if (phase == Phase::Opening) {
+        if (openingClock.getElapsedTime().asSeconds() > openingDuration) {
+            setPhase(Phase::PlayerPick);
+        }
+        return;
     }
-    if (phase == BattlePhase::OpponentAttackAnim &&
-        animClock.getElapsedTime().asSeconds() > animDuration) {
-        playerHitFlash     = false;
-        selectedSkillIndex = -1;
-        phase              = BattlePhase::PlayerPick;
-        turnCount++; // Increment turn after both player and boss act
-    }
+    if (currentPhaseHandler) currentPhaseHandler->update(this);
 }
 
 void Dungeon::render(sf::RenderWindow &window) {
     window.draw(backgroundSprite);
 
-    // Boss hit flash
-    if (bossHitFlash) {
-        bossSprite.setColor(sf::Color::Red);
-    } else {
-        bossSprite.setColor(sf::Color::White);
-    }
-    window.draw(bossSprite);
-
-    // Player hit flash (screen overlay)
-    if (playerHitFlash) {
-        sf::RectangleShape redOverlay(sf::Vector2f(1920, 1080));
-        redOverlay.setFillColor(sf::Color(255, 0, 0, 100));
-        window.draw(redOverlay);
-    }
-
-    // Load font
+    // Font
     sf::Font font;
     font.loadFromFile("assets/fonts/Electrolize-Regular.ttf");
 
@@ -129,15 +77,36 @@ void Dungeon::render(sf::RenderWindow &window) {
     title.setFillColor(sf::Color::White);
     window.draw(title);
 
-    // Turn counter (always show)
-    std::string turnStr = "Turn: " + std::to_string(turnCount);
-    sf::Text    turnText(turnStr, font, 32);
+    // Boss
+    bossSprite.setColor(bossHitFlash ? sf::Color::Red : sf::Color::White);
+    window.draw(bossSprite);
+    if (bossHitFlash) {
+        sf::RectangleShape redOverlay(sf::Vector2f(1920, 1080));
+        redOverlay.setFillColor(sf::Color(255, 0, 0, 80));
+        window.draw(redOverlay);
+    }
+    updateBossHitFlash();
+    std::string bossHpStr = "Boss HP: " + std::to_string(boss.getCurrentHP());
+    sf::Text    bossHpText(bossHpStr, font, 28);
+    bossHpText.setPosition(1500, 1000);
+    bossHpText.setFillColor(sf::Color::Red);
+    window.draw(bossHpText);
+
+    // Player hit flash
+    if (playerHitFlash) {
+        sf::RectangleShape redOverlay(sf::Vector2f(1920, 1080));
+        redOverlay.setFillColor(sf::Color(255, 0, 0, 100));
+        window.draw(redOverlay);
+    }
+
+    // Turn counter
+    sf::Text turnText("Turn: " + std::to_string(turnCount), font, 32);
     turnText.setFillColor(sf::Color::Cyan);
     turnText.setPosition(30, 30);
     window.draw(turnText);
 
     // Opening animation
-    if (phase == BattlePhase::Opening) {
+    if (phase == Phase::Opening) {
         drawCenteredBoxWithText(window, "A powerful foe appears!", 700, 100, 960,
                                 440, font, 40, sf::Color(0, 0, 0, 220),
                                 sf::Color::Red);
@@ -148,82 +117,68 @@ void Dungeon::render(sf::RenderWindow &window) {
         return;
     }
 
-    // Draw UI based on phase
-    if (phase == BattlePhase::PlayerPick) {
-        // Skill list
-        std::string skillList = "Skills: ";
-        for (size_t i = 0; i < playerSkills.size(); ++i) {
-            skillList += "[" + std::to_string(i + 1) + "] " + playerSkills[i].name;
-            if (i != playerSkills.size() - 1) skillList += "  ";
-        }
-        drawCenteredBoxWithText(window, skillList, 1200, 80, 960, 800, font, 28,
-                                sf::Color(0, 0, 0, 200), sf::Color::White);
+    // Delegate to phase handler
+    if (currentPhaseHandler) currentPhaseHandler->render(this, window, font);
 
-        // Show selected skill message if any
-        if (selectedSkillIndex != -1) {
-            std::string msg = "Player picked \"" +
-                              playerSkills[selectedSkillIndex].name +
-                              "\". Press [E] to confirm.";
-            drawCenteredBoxWithText(window, msg, 1000, 60, 960, 870, font, 28,
-                                    sf::Color(0, 0, 0, 200), sf::Color::Yellow);
-        } else {
-            drawCenteredBoxWithText(window, "Press [1-5] to select skill", 800, 60,
-                                    960, 900, font, 28, sf::Color(0, 0, 0, 200),
-                                    sf::Color::Cyan);
-        }
-    } else if (phase == BattlePhase::PlayerConfirm) {
-        // Show selected skill and confirm prompt
-        if (selectedSkillIndex != -1) {
-            std::string msg =
-                "Selected: " + playerSkills[selectedSkillIndex].name +
-                ". Press [E] to confirm.";
-            drawCenteredBoxWithText(window, msg, 1000, 60, 960, 800, font, 28,
-                                    sf::Color(0, 0, 0, 200), sf::Color::Yellow);
-        }
-    } else if (phase == BattlePhase::PlayerAttackAnim) {
-        // Show attack message
-        if (selectedSkillIndex != -1) {
-            std::string msg =
-                "Player used \"" + playerSkills[selectedSkillIndex].name + "\"!";
-            drawCenteredBoxWithText(window, msg, 1000, 60, 960, 800, font, 28,
-                                    sf::Color(0, 0, 0, 200), sf::Color::White);
-        }
-    } else if (phase == BattlePhase::OpponentPick) {
-        drawCenteredBoxWithText(window, "Boss is choosing...", 800, 60, 960, 800,
-                                font, 28, sf::Color(0, 0, 0, 200), sf::Color::Red);
-    } else if (phase == BattlePhase::OpponentAttackAnim) {
-        if (selectedSkillIndex != -1) {
-            std::string msg =
-                "Boss used \"" + playerSkills[selectedSkillIndex].name + "\"!";
-            drawCenteredBoxWithText(window, msg, 1000, 60, 960, 800, font, 28,
-                                    sf::Color(0, 0, 0, 200), sf::Color::Red);
-        }
+    // UI
+    ui.render(window);
+
+    if (player) {
+        std::string playerHpStr =
+            "Player HP: " + std::to_string(player->getCurrentHP());
+        sf::Text playerHpText(playerHpStr, font, 28);
+        playerHpText.setPosition(30, 1000);
+        playerHpText.setFillColor(sf::Color::Green);
+        window.draw(playerHpText);
+
+        std::string playerManaStr =
+            "Player Mana: " + std::to_string(player->getCurrentMana());
+        sf::Text playerManaText(playerManaStr, font, 28);
+        playerManaText.setPosition(30, 1040);
+        playerManaText.setFillColor(sf::Color::Cyan);
+        window.draw(playerManaText);
     }
-
-    // // Last action message (if any)
-    // if (!lastActionMessage.empty())
-    //     drawCenteredBoxWithText(window, lastActionMessage, 1000, 60, 960, 700,
-    //     font, 28,
-    //                             sf::Color(0, 0, 0, 180), sf::Color::Yellow);
 }
-
-Dungeon::Turn Dungeon::getCurrentTurn() const { return currentTurn; }
 
 void Dungeon::reset() {
-    currentTurn = Player;
-    phase       = BattlePhase::Opening;
-    openingClock.restart();
+    gameEnded               = false; 
+    waitingForContinue      = false;
+    selectedSkillIndex      = -1;
+    pendingSkillIndex       = -1;
+    confirmNormalAtFullMana = false;
+
+    currentTurn        = Person;
+    phase              = Phase::Opening;
     turnCount          = 1;
     selectedSkillIndex = -1;
-    lastActionMessage.clear();
-    bossHitFlash   = false;
-    playerHitFlash = false;
+    bossHitFlash       = false;
+    playerHitFlash     = false;
+    openingClock.restart();
+    randomizeBossImage();
+    setPhase(Phase::Opening);
+
+    // Reset boss stats
+    boss.setCurrentHP(boss.getMaxHP());
+
+    if (player) {
+        player->setCurrentMana(player->getMaxMana());
+    }
+
+    // Reset player stats
 }
 
-void Dungeon::centerText(sf::Text &text, float x, float y) {
-    sf::FloatRect bounds = text.getLocalBounds();
-    text.setOrigin(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
-    text.setPosition(x, y);
+void Dungeon::setPhase(Phase newPhase) {
+    phase = newPhase;
+    switch (phase) {
+        case Phase::PlayerPick  : currentPhaseHandler = &playerPickPhase; break;
+        case Phase::PlayerAttack: currentPhaseHandler = &playerAttackPhase; break;
+        case Phase::OpponentPick: currentPhaseHandler = &opponentPickPhase; break;
+        case Phase::OpponentAttack:
+            currentPhaseHandler = &opponentAttackPhase;
+            ++turnCount;
+            break;
+        default: currentPhaseHandler = nullptr; break;
+    }
 }
 
 void Dungeon::drawCenteredBoxWithText(sf::RenderWindow  &window,
@@ -232,20 +187,46 @@ void Dungeon::drawCenteredBoxWithText(sf::RenderWindow  &window,
                                       float centerY, const sf::Font &font,
                                       unsigned int charSize, sf::Color boxColor,
                                       sf::Color textColor) {
-    // Draw rectangle
     sf::RectangleShape box(sf::Vector2f(boxWidth, boxHeight));
     box.setFillColor(boxColor);
     box.setOrigin(boxWidth / 2, boxHeight / 2);
     box.setPosition(centerX, centerY);
     window.draw(box);
 
-    // Draw centered text
     sf::Text text(message, font, charSize);
     centerText(text, centerX, centerY);
     text.setFillColor(textColor);
     window.draw(text);
 }
 
-void Dungeon::setPlayerSkills(const std::vector<Skill> &skills) {
-    playerSkills = skills;
+void Dungeon::centerText(sf::Text &text, float x, float y) {
+    sf::FloatRect bounds = text.getLocalBounds();
+    text.setOrigin(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    text.setPosition(x, y);
+}
+
+void Dungeon::randomizeBossImage() {
+    std::vector<std::string> bossImages;
+    for (const auto &entry :
+         std::filesystem::directory_iterator("assets/dungeon/Boss")) {
+        if (entry.is_regular_file() && (entry.path().extension() == ".PNG" ||
+                                        entry.path().extension() == ".png")) {
+            bossImages.push_back(entry.path().string());
+        }
+    }
+    if (!bossImages.empty()) {
+        std::random_device              rd;
+        std::mt19937                    gen(rd());
+        std::uniform_int_distribution<> dist(0, bossImages.size() - 1);
+        std::string                     bossImagePath = bossImages[dist(gen)];
+        bossTexture.loadFromFile(bossImagePath);
+    }
+    bossSprite.setTexture(bossTexture);
+    bossSprite.setScale(0.3f, 0.3f);
+    bossSprite.setPosition(1920 / 2, 500);
+}
+
+void Dungeon::showMessage(const std::string &msg) {
+    ui.dialogue.setText(msg);
+    ui.dialogue.open();
 }

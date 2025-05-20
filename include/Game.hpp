@@ -25,9 +25,9 @@ class Game {
         Story story;
 
         // Player
-        Player player = {
-            {800, 600}
-        };
+        // Player player = {
+        //     {800, 600}
+        // };
 
         // Background
         sf::Texture backgroundTexture;
@@ -48,6 +48,13 @@ class Game {
 
         // playerInfo
         std::string playerName = "Hero";
+
+        // Player
+        Player player = {
+            {800, 600}, playerName, maxHP, currentHP, maxMana, currentMana,
+            currentAtk, currentDef, 1
+        };
+
 
         // Dungeon
         Dungeon dungeon;

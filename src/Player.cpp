@@ -4,6 +4,7 @@
 
 Player::Player(sf::Vector2f position) {
     // Load player sprite
+    Entity();
     if (!texture.loadFromFile("assets/characters/Spritesheet.png")) {
         std::cerr << "Failed to load sprite sheet!" << std::endl;
     }
@@ -11,6 +12,25 @@ Player::Player(sf::Vector2f position) {
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0, 0, PLAYER_FRAME, PLAYER_FRAME));
     setPosition(position);
+
+    inventory.setMaxSize(20); // Set the maximum size of the inventory
+}
+
+Player::Player(sf::Vector2f position, std::string name, int maxHP,
+                 int currentHP, int maxMana, int currentMana, int attackPower,
+                 int defensePower, int level)
+    : Entity(name, maxHP, currentHP, maxMana, currentMana, attackPower,
+             defensePower, level) {
+    // Load player sprite
+    if (!texture.loadFromFile("assets/characters/Spritesheet.png")) {
+        std::cerr << "Failed to load sprite sheet!" << std::endl;
+    }
+    sprite.setScale(3.0f, 3.0f);
+    sprite.setTexture(texture);
+    sprite.setTextureRect(sf::IntRect(0, 0, PLAYER_FRAME, PLAYER_FRAME));
+    setPosition(position);
+
+    inventory.setMaxSize(20); // Set the maximum size of the inventory
 }
 
 void Player::setPosition(sf::Vector2f position) {
