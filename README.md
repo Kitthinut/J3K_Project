@@ -60,10 +60,11 @@ Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive.
    - Engage in turn-based battles using attacks, skills, and inventory items.
    - Upgrade your HP and Mana to survive longer.
 
-4. **Inventory & Upgrades:**
-   - Press `I` to access your inventory (guidebook, potions, etc.).
-   - Use items during battle or outside of combat to gain advantages.
+4. **Upgrades:**
    - Defeating bosses may reward you with upgrades or helpful items.
+   - Upgrade your stats in your dorm.
+   - The maximum HP is 100.
+   - The maximum Mana is 100.
 
 5. **End Condition:**
    - The game continues indefinitely — you play until your HP reaches zero.
