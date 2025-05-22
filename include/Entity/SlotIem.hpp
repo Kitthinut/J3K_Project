@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Item.hpp"
 
 class slotItem {

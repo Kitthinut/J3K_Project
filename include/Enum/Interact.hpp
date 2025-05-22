@@ -1,3 +1,3 @@
 #pragma once
 
-enum Interact { Empty, Dining, Bed, Wardrobe, Computor, Teacher_Table}; 
+enum Interact { Empty, Bed, Wardrobe, Teacher_Table}; 

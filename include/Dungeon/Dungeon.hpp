@@ -1,8 +1,7 @@
 #pragma once
 
 #include "BattlePhase.hpp"
-#include "Entity.hpp"
-#include "Player.hpp"
+#include "Entity/Player.hpp"
 #include "UI/UI.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -20,7 +19,7 @@ class Dungeon {
             End
         };
 
-        Dungeon();
+        Dungeon(UI &ui, Player &player);
         void handleEvent(const sf::Event &event, bool &exitDungeonTest);
         void update();
         void render(sf::RenderWindow &window);
@@ -42,7 +41,6 @@ class Dungeon {
         bool isConfirmNormalAtFullMana() const { return confirmNormalAtFullMana; }
 
         // Setters
-        void setPlayer(Player *p);
         void setPhase(Phase newPhase);
 
         void setPendingSkillIndex(int idx) { pendingSkillIndex = idx; }
@@ -75,8 +73,7 @@ class Dungeon {
         void showMessage(const std::string &msg);
         void drawCenteredBoxWithText(sf::RenderWindow  &window,
                                      const std::string &message, float boxWidth,
-                                     float boxHeight, float centerX, float centerY,
-                                     const sf::Font &font, unsigned int charSize,
+                                     float boxHeight, float centerX, float centerY, unsigned int charSize,
                                      sf::Color boxColor, sf::Color textColor);
 
     private:
@@ -85,10 +82,10 @@ class Dungeon {
 
         // Game state
         sf::Clock bossHitClock;
-        Turn      currentTurn;
-        Phase     phase;
-        int       turnCount;
-        int       selectedSkillIndex;
+        Turn      currentTurn             = Person;
+        Phase     phase                   = Phase::Opening;
+        int       turnCount               = 1;
+        int       selectedSkillIndex      = -1;
         int       pendingSkillIndex       = -1;
         float     bossHitFlashDuration    = 0.3f;
         bool      waitingForContinue      = false;
@@ -96,11 +93,14 @@ class Dungeon {
         bool      gameEnded               = false;
 
         // Entities
-        Player *player;
-        Entity  boss;
+        Player *player = nullptr;
+        Entity  boss   = {"Boss", 200, 200, 100, 100, 30, 10, 1};
 
         // UI
-        UI ui;
+        UI *ui = nullptr;
+
+        // Fonts
+        sf::Font *font;
 
         // Graphics
         sf::Texture backgroundTexture;
@@ -109,13 +109,13 @@ class Dungeon {
         sf::Sprite  bossSprite;
 
         // Animation & effects
-        bool      bossHitFlash;
-        bool      playerHitFlash;
         sf::Clock openingClock;
-        float     openingDuration;
+        bool      bossHitFlash    = false;
+        bool      playerHitFlash  = false;
+        float     openingDuration = 1.5f;
 
         // Battle phase handler
-        IBattlePhaseHandler *currentPhaseHandler;
+        IBattlePhaseHandler *currentPhaseHandler = nullptr;
         PlayerPickPhase      playerPickPhase;
         PlayerAttackPhase    playerAttackPhase;
         OpponentPickPhase    opponentPickPhase;

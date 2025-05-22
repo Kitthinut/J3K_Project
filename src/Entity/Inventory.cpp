@@ -1,4 +1,4 @@
-#include<Inventory.hpp>
+#include "Entity/Inventory.hpp"
 
 void Inventory::addItem(Item *item, int quantity) {
     for (auto& slot : _itemsList) {

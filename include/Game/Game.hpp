@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Dungeon.hpp"
+#include "Dungeon/Dungeon.hpp"
 #include "Enum/Direction.hpp"
 #include "Enum/Room.hpp"
-#include "Player.hpp"
 #include "Story.hpp"
-#include "UI/UI.hpp"
 
 #include <functional>
 #include <SFML/Graphics.hpp>
@@ -36,32 +34,20 @@ class Game {
         // Upgrade Stats Popup
         int upgradePoints = 5;
 
-        // Player Stats
-        int currentHP   = 50;
-        int maxHP       = 100;
-        int currentMana = 30;
-        int maxMana     = 50;
-        int currentAtk  = 10;
-        int currentDef  = 5;
-        int currentExp  = 0;
-        int maxExp      = 100;
-
         // playerInfo
         std::string playerName = "Hero";
 
         // Player
         Player player = {
-            {800, 600}, playerName, maxHP, currentHP, maxMana, currentMana,
-            currentAtk, currentDef, 1
+            {800, 600},
+            "Hero", 100, 50, 50, 30, 10, 5, 1
         };
 
-
         // Dungeon
-        Dungeon dungeon;
+        Dungeon dungeon       = {ui, player};
         bool    inDungeonTest = false;
 
         void changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos);
-        void statsCap();
         void modifyStat(int direction);
         void handleChoiceSelection();
         void openPopupForInteraction();
