@@ -86,13 +86,16 @@ class Entity {
         void setCurrentHP(int currentHP) { _currentHP = currentHP; }
 
         void increaseCurrentHP(int amount) {
-            _currentHP += _currentHP > _maxHP ? 0 : amount;
+            _currentHP += amount;
+            _currentHP = _currentHP > _maxHP ? _maxHP : _currentHP;
         } // Increase current HP by a specified amount
 
         void setCurrentMana(int currentMana) { _currentMana = currentMana; }
 
         void increaseCurrentMana(int amount) {
-            _currentMana += _currentMana > _maxMana ? 0 : amount;
+            _currentMana += amount;
+            _currentMana = _currentMana > _maxMana ? _maxMana : _currentMana;
+
         } // Increase current mana by a specified amount
 
         void setSkill(int index, Skill *skill) {
