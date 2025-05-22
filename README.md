@@ -29,7 +29,6 @@ Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive.
 ### Functional Requirements
 - The player can move the character using the keyboard.
 - The game must display health/mana/exp bars.
-- The player can access an inventory during gameplay.
 - Each room must allow interaction with objects.
 - Battles and upgrades must be functional and reactive.
 
@@ -39,6 +38,7 @@ Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive.
 - UI should be responsive and readable at 1920x1080 resolution.
 - Load times between rooms should be under 2 seconds.
 - Visuals must not hinder accessibility.
+- The game size must not be too large (not more than 500 MB).
 
 ---
 
@@ -77,7 +77,6 @@ Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive.
 | Move Down       | `S`                |
 | Move Left       | `A`                |
 | Move Right      | `D`                |
-| Open Inventory  | `I`                |
 | Character Stats | `C`                |
 | Interact        | `Space` or `E`     |
 | Pause / Menu    | `Esc`              |
@@ -86,7 +85,6 @@ Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive.
 - Start the game and read the introdubction scene.
 - Use the movement keys to explore the environment.
 - Press `Space` near objects or characters to interact.
-- Access inventory and use items with `I`.
 - Engage in battles when triggered.
 - Use strategy to defeat bosses and manage resources.
 - Progress through rooms until the game is complete.
