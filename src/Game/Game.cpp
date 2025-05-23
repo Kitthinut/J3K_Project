@@ -156,6 +156,7 @@ void Game::processEvents() {
                 player.setMoveable(true);
                 if (player.getCurrentHP() <= 0) {
                     player.setCurrentHP(player.getMaxHP() / 2);
+                    player.setCurrentMana(player.getMaxMana());
                 }
                 return;
             }

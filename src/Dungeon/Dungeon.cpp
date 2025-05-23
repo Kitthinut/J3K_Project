@@ -71,9 +71,9 @@ void Dungeon::reset() {
     // Reset boss stats
     boss.setCurrentHP(boss.getMaxHP());
 
-    if (player) {
-        player->setCurrentMana(player->getMaxMana());
-    }
+    // if (player) {
+    //     player->setCurrentMana(player->getMaxMana());
+    // }
 
     // Reset player stats
 }
@@ -197,17 +197,20 @@ void Dungeon::render(sf::RenderWindow &window) {
     if (currentPhaseHandler) currentPhaseHandler->render(this, window);
 
     if (player) {
+        float x = 1700;
+        float y = 30;
+
         std::string playerHpStr =
             "Player HP: " + std::to_string(player->getCurrentHP());
         sf::Text playerHpText(playerHpStr, *font, 28);
-        playerHpText.setPosition(30, 1000);
+        playerHpText.setPosition(x, y);
         playerHpText.setFillColor(sf::Color::Green);
         window.draw(playerHpText);
 
         std::string playerManaStr =
             "Player Mana: " + std::to_string(player->getCurrentMana());
         sf::Text playerManaText(playerManaStr, *font, 28);
-        playerManaText.setPosition(30, 1040);
+        playerManaText.setPosition(x, y + 40);
         playerManaText.setFillColor(sf::Color::Cyan);
         window.draw(playerManaText);
     }
