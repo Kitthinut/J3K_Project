@@ -13,16 +13,23 @@ Dungeon::Dungeon(UI &ui, Player &player): ui(&ui), player(&player) {
     backgroundTexture.loadFromFile("assets/background/Dungeon.png");
     backgroundSprite.setTexture(backgroundTexture);
 
-    // Random boss image
-    randomizeBossImage();
-
+    // Load boss texture
+    for (const auto &entry :
+         std::filesystem::directory_iterator("assets/dungeon/Boss")) {
+        if (entry.is_regular_file() && (entry.path().extension() == ".PNG" ||
+                                        entry.path().extension() == ".png")) {
+            bossImages.push_back(entry.path().string());
+        }
+    }
+    boss.setSkill(0, new Skill("Normal Attact", 0, 0, 10, 1.0f, 0));
+    
     // Set initial phase
     setPhase(Phase::Opening);
 }
 
 void Dungeon::handleEvent(const sf::Event &event, bool &exitDungeonTest) {
     // If the dialogue is open, let it handle input and block phase input
-    if (ui->dialogue.isOpen()) {
+    if (!gameEnded && ui->dialogue.isOpen()) {
         if (event.type == sf::Event::KeyPressed &&
             event.key.code == sf::Keyboard::Space) {
             ui->dialogue.continues();
@@ -30,15 +37,17 @@ void Dungeon::handleEvent(const sf::Event &event, bool &exitDungeonTest) {
         return;
     }
 
+    if (event.type != sf::Event::KeyPressed) return;
+
     // Allow ESC to exit if game ended
-    if (isGameEnded() && event.type == sf::Event::KeyPressed &&
-        event.key.code == sf::Keyboard::Escape) {
+    if (isGameEnded() && event.key.code == sf::Keyboard::Escape) {
         exitDungeonTest = true;
+        ui->dialogue.close();
         return;
     }
 
     if (currentPhaseHandler)
-        currentPhaseHandler->handleEvent(this, event, exitDungeonTest);
+        currentPhaseHandler->handleEvent(event.key.code, exitDungeonTest);
 }
 
 void Dungeon::update() {
@@ -48,15 +57,14 @@ void Dungeon::update() {
         }
         return;
     }
-    if (currentPhaseHandler) currentPhaseHandler->update(this);
+    if (currentPhaseHandler) currentPhaseHandler->update();
 }
 
 void Dungeon::reset() {
-    gameEnded               = false;
-    waitingForContinue      = false;
-    selectedSkillIndex      = -1;
-    pendingSkillIndex       = -1;
-    confirmNormalAtFullMana = false;
+    gameEnded          = false;
+    waitingForContinue = false;
+    selectedSkillIndex = -1;
+    pendingSkillIndex  = -1;
 
     currentTurn        = Person;
     phase              = Phase::Opening;
@@ -65,17 +73,8 @@ void Dungeon::reset() {
     bossHitFlash       = false;
     playerHitFlash     = false;
     openingClock.restart();
-    randomizeBossImage();
+    randomizeBoss();
     setPhase(Phase::Opening);
-
-    // Reset boss stats
-    boss.setCurrentHP(boss.getMaxHP());
-
-    // if (player) {
-    //     player->setCurrentMana(player->getMaxMana());
-    // }
-
-    // Reset player stats
 }
 
 void Dungeon::setPhase(Phase newPhase) {
@@ -92,6 +91,23 @@ void Dungeon::setPhase(Phase newPhase) {
     }
 }
 
+void Dungeon::triggerBossHitFlash() {
+    bossHitFlash = true;
+    HitClock.restart();
+}
+
+void Dungeon::triggerPlayerHitFlash() {
+    playerHitFlash = true;
+    HitClock.restart();
+}
+
+void Dungeon::updateHitFlash() {
+    if (HitClock.getElapsedTime().asSeconds() <= hitFlashDuration) return;
+
+    if (bossHitFlash) bossHitFlash = false;
+    else if (playerHitFlash) playerHitFlash = false;
+}
+
 void Dungeon::drawCenteredBoxWithText(sf::RenderWindow  &window,
                                       const std::string &message, float boxWidth,
                                       float boxHeight, float centerX,
@@ -99,8 +115,9 @@ void Dungeon::drawCenteredBoxWithText(sf::RenderWindow  &window,
                                       sf::Color boxColor, sf::Color textColor) {
     sf::RectangleShape box(sf::Vector2f(boxWidth, boxHeight));
     box.setFillColor(boxColor);
-    box.setOrigin(boxWidth / 2, boxHeight / 2);
-    box.setPosition(centerX, centerY);
+    float x = centerX - (boxWidth / 2);
+    float y = centerY - (boxHeight / 2);
+    box.setPosition(x, y);
     window.draw(box);
 
     sf::Text text(message, *font, charSize);
@@ -115,20 +132,17 @@ void Dungeon::centerText(sf::Text &text, float x, float y) {
     text.setPosition(x, y);
 }
 
-void Dungeon::randomizeBossImage() {
-    std::vector<std::string> bossImages;
-    for (const auto &entry :
-         std::filesystem::directory_iterator("assets/dungeon/Boss")) {
-        if (entry.is_regular_file() && (entry.path().extension() == ".PNG" ||
-                                        entry.path().extension() == ".png")) {
-            bossImages.push_back(entry.path().string());
-        }
-    }
+void Dungeon::randomizeBoss() {
     if (!bossImages.empty()) {
         std::random_device              rd;
         std::mt19937                    gen(rd());
         std::uniform_int_distribution<> dist(0, bossImages.size() - 1);
         std::string                     bossImagePath = bossImages[dist(gen)];
+
+        size_t      pos      = bossImagePath.find_last_of("/\\");
+        std::string bossName = bossImagePath.substr(
+            pos + 1, bossImagePath.find_last_of(".") - pos - 1);
+        boss.setName(bossName);
         bossTexture.loadFromFile(bossImagePath);
     }
     bossSprite.setTexture(bossTexture);
@@ -138,6 +152,16 @@ void Dungeon::randomizeBossImage() {
     bossSprite.setScale(factor, factor);
     bossSprite.setPosition((WINDOW_WIDTH - size_width) / 2,
                            WINDOW_HEIGHT - size_height);
+
+    int level = (player->getLevel() - 5) + (rand() % 11);
+    if (level < 1) level = 1; // Ensure level is at least 1
+    float hp  = 100 + (2 * level * BOSS_FACTOR);
+    float atk = (10 + level) * BOSS_FACTOR;
+    float def = 10 + (level * BOSS_FACTOR);
+    boss.setLevel(level);
+    boss.setCurrentHP(hp);
+    boss.setAttackPower(atk);
+    boss.setDefensePower(def);
 }
 
 void Dungeon::showMessage(const std::string &msg) {
@@ -149,30 +173,27 @@ void Dungeon::render(sf::RenderWindow &window) {
     window.draw(backgroundSprite);
 
     // Title
-    sf::Text title("Dungeon Test Mode", *font, 48);
-    centerText(title, 960, 60);
-    title.setFillColor(sf::Color::White);
-    window.draw(title);
+    // sf::Text title("Class", *font, 48);
+    // centerText(title, WINDOW_WIDTH / 2, 60);
+    // title.setFillColor(sf::Color::White);
+    // window.draw(title);
+
+    updateHitFlash();
 
     // Boss
     bossSprite.setColor(bossHitFlash ? sf::Color::Red : sf::Color::White);
     window.draw(bossSprite);
-    if (bossHitFlash) {
-        sf::RectangleShape redOverlay(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
-        redOverlay.setFillColor(sf::Color(255, 0, 0, 80));
-        window.draw(redOverlay);
-    }
-    updateBossHitFlash();
+    std::string bossLevel = "Lv: " + std::to_string(boss.getLevel());
     std::string bossHpStr = "Boss HP: " + std::to_string(boss.getCurrentHP());
-    sf::Text    bossHpText(bossHpStr, *font, 28);
-    bossHpText.setPosition(1500, 1000);
-    bossHpText.setFillColor(sf::Color::Red);
-    window.draw(bossHpText);
+    drawCenteredBoxWithText(window, bossLevel, 300, 60, WINDOW_WIDTH / 2, 170, 30,
+                            sf::Color(0, 0, 0, 180), sf::Color::White);
+    drawCenteredBoxWithText(window, bossHpStr, 300, 60, WINDOW_WIDTH / 2, 230, 30,
+                            sf::Color(0, 0, 0, 180), sf::Color::Red);
 
     // Player hit flash
     if (playerHitFlash) {
         sf::RectangleShape redOverlay(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
-        redOverlay.setFillColor(sf::Color(255, 0, 0, 100));
+        redOverlay.setFillColor(sf::Color(255, 0, 0, 80));
         window.draw(redOverlay);
     }
 
@@ -184,17 +205,17 @@ void Dungeon::render(sf::RenderWindow &window) {
 
     // Opening animation
     if (phase == Phase::Opening) {
-        drawCenteredBoxWithText(window, "A powerful foe appears!", 700, 100, 960,
-                                440, 40, sf::Color(0, 0, 0, 220), sf::Color::Red);
-        drawCenteredBoxWithText(window, "Boss: Goku Drip Entity", 700, 80, 960,
-                                540, 36, sf::Color(0, 0, 0, 200),
-                                sf::Color::Yellow);
-        // window.draw(bossSprite);
+        drawCenteredBoxWithText(window, "A powerful foe appears!",
+                                WINDOW_WIDTH / 2, 100, 960, 440, 40,
+                                sf::Color(0, 0, 0, 220), sf::Color::Red);
+        drawCenteredBoxWithText(window, "Boss: " + boss.getName(),
+                                WINDOW_WIDTH / 2, 80, 960, 540, 36,
+                                sf::Color(0, 0, 0, 200), sf::Color::Yellow);
         return;
     }
 
     // Delegate to phase handler
-    if (currentPhaseHandler) currentPhaseHandler->render(this, window);
+    if (currentPhaseHandler) currentPhaseHandler->render(window);
 
     if (player) {
         float x = 1700;

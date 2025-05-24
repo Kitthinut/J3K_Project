@@ -14,6 +14,10 @@ void UI::setLevel(const int level) {
     _text_level.setText("Lv " + std::to_string(level));
 }
 
+void UI::setDays(const int days) {
+    _text_Day.setText("Day " + std::to_string(days));
+}
+
 void UI::setBarsVolume(const Volume &hp, const Volume &mana, const Volume &exp) {
     _bar_hp.setVolume(hp);
     _bar_mana.setVolume(mana);
@@ -40,6 +44,9 @@ void UI::render(sf::RenderWindow &window) {
 
     // ==== Draw Level ====
     _text_level.draw(window);
+
+    // ==== Draw Day ====
+    _text_Day.draw(window);
 
     // ==== Draw Bar ====
     _bar_hp.draw(window);

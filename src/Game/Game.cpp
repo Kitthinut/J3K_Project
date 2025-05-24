@@ -43,7 +43,7 @@ void Game::changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos) {
 }
 
 void Game::modifyStat(const int direction) {
-    if ((direction > 0 && upgradePoints <= 0) || direction == 0) return;
+    if ((direction > 0 && player.getStatePoint() <= 0) || direction == 0) return;
 
     int delta = direction;
     switch (ui.popup_upgrade.getSelected()) {
@@ -66,7 +66,7 @@ void Game::modifyStat(const int direction) {
     }
 
     player.setMoveable(true);
-    upgradePoints -= delta;
+    player.increaseStatePoint(-delta);
     ui.popup_upgrade.close();
 }
 
@@ -89,15 +89,23 @@ void Game::handleChoiceSelection() {
         case Bed:
             std::cout << "Bed" << std::endl;
             switch (selected) {
-                case 0 : player.increaseCurrentHP(50); break;
-                case 1 : player.increaseCurrentHP(20); break;
+                case 0:
+                    player.setCurrentHP(player.getMaxHP());
+                    NextDay();
+                    break;
+                case 1:
+                    player.increaseCurrentHP(player.getCurrentHP() / 2);
+                    --slot_remaining;
+                    break;
                 default: break;
             }
+
             player.setMoveable(true);
             break;
         case Teacher_Table:
             if (!inDungeonTest) {
                 std::cout << "You chose to play games!" << std::endl;
+                --slot_remaining;
                 inDungeonTest = true;
                 dungeon.reset();
                 ui.setDungeon(true);
@@ -118,15 +126,10 @@ void Game::openPopupForInteraction() {
             ui.popup_choice.setChoices({"Upgrade Stats"});
             player.setMoveable(false);
             break;
-        // case Dining:
-        //     ui.popup_choice.open();
-        //     ui.popup_choice.setChoices({"[food left] Eat Food (+30 HP)",
-        //                                 "Drink Water (+10 HP)", "Drink Potion"});
-        //     player.setMoveable(false);
-        //     break;
         case Bed:
             ui.popup_choice.open();
-            ui.popup_choice.setChoices({"Sleep (+50 HP)", "Nap (+20 HP)"});
+            ui.popup_choice.setChoices(
+                {"Sleep (+100% HP & Skip Day)", "Rest (+50% HP)"});
             player.setMoveable(false);
             break;
         case Teacher_Table:
@@ -138,6 +141,11 @@ void Game::openPopupForInteraction() {
     }
 }
 
+void Game::NextDay() {
+    ++day;
+    slot_remaining = 5; // Reset skill points for the next day
+}
+
 void Game::processEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -145,6 +153,8 @@ void Game::processEvents() {
             window.close();
             break;
         }
+
+        if (event.type != sf::Event::KeyPressed) break;
 
         if (inDungeonTest) {
             bool exitDungeonTest = false;
@@ -163,7 +173,6 @@ void Game::processEvents() {
             break;
         }
 
-        if (event.type != sf::Event::KeyPressed) break;
         const sf::Keyboard::Key key = event.key.code;
 
         switch (key) {
@@ -216,14 +225,20 @@ void Game::update() {
         return;
     }
 
+    if (slot_remaining <= 0) NextDay();
+
     // Update HP and Mana bars
-    Volume hp   = {player.getCurrentHP(), player.getMaxHP()};
-    Volume mana = {player.getCurrentMana(), player.getMaxMana()};
-    Volume exp  = {player.getEXP(), player.getEXPtoNextLevel()};
+    Volume    hp   = {player.getCurrentHP(), player.getMaxHP()};
+    Volume    mana = {player.getCurrentMana(), player.getMaxMana()};
+    Volume    exp  = {player.getEXP(), 100};
+    const int atk  = player.getAttackPower();
+    const int def  = player.getDefensePower();
     ui.setBarsVolume(hp, mana, exp);
-    ui.popup_character_info.update(playerName, 1, hp, mana, exp);
-    ui.popup_upgrade.update(hp, mana, player.getAttackPower(),
-                            player.getDefensePower());
+    ui.popup_character_info.update(playerName, player.getLevel(), hp, mana, exp,
+                                   atk, def);
+    ui.popup_upgrade.update(hp, mana, atk, def);
+    ui.setLevel(player.getLevel());
+    ui.setDays(day);
 
     // Update Movement
     player.update();
@@ -253,8 +268,8 @@ void Game::render() {
 }
 
 void Game::run() {
-    // story.introduction(window);
-    while (window.isOpen()) {
+    story.introduction(window);
+    while (window.isOpen() && day <= 40) {
         processEvents();
         update();
         render();

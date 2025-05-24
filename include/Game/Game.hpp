@@ -22,17 +22,9 @@ class Game {
         // Story Trailer
         Story story;
 
-        // Player
-        // Player player = {
-        //     {800, 600}
-        // };
-
         // Background
         sf::Texture backgroundTexture;
         sf::Sprite  background;
-
-        // Upgrade Stats Popup
-        int upgradePoints = 5;
 
         // playerInfo
         std::string playerName = "Hero";
@@ -47,10 +39,15 @@ class Game {
         Dungeon dungeon       = {ui, player};
         bool    inDungeonTest = false;
 
+        // Game state
+        int day            = 1; // Current day in the game
+        int slot_remaining = 5; // Remaining skill points
+
         void changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos);
         void modifyStat(int direction);
         void handleChoiceSelection();
         void openPopupForInteraction();
+        void NextDay();
 
         // Game loop helpers
         void processEvents();
