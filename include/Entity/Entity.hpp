@@ -1,11 +1,8 @@
 #pragma once
-#include <iostream> // For std::cout and std::endl
-#include <Skill.hpp>
 
-#ifndef ENTITY_H
-#define ENTITY_H
+class Skill; // Forward declaration of the Skill class
 
-class Skill;
+#include <iostream>
 
 class Entity {
     private:
@@ -19,9 +16,7 @@ class Entity {
         int         _level;
 
         Skill *_skills[5]; // Array of skills available to the entity
-        // Skill *_normalAttack = &normalAttack; // The normal attack skill of the
-        // entity
-        Skill _normalAttack(); // The normal attack skill of the entity
+
     public:
         Entity() {
             for (int i = 0; i < 5; ++i)
@@ -75,32 +70,30 @@ class Entity {
         // Increase max mana by a specified amount
         void increaseMaxMana(int amount) { _maxMana += amount; }
 
-        void increaseAttackPower(int amount) {
-            _attackPower += amount;
-        } // Increase attack power by a specified amount
+        // Increase attack power by a specified amount
+        void increaseAttackPower(int amount) { _attackPower += amount; }
 
-        void increaseDefensePower(int amount) {
-            _defensePower += amount;
-        } // Increase defense power by a specified amount
+        // Increase defense power by a specified amount
+        void increaseDefensePower(int amount) { _defensePower += amount; }
+
+        // Increase current HP by a specified amount
+        void increaseCurrentHP(int amount) {
+            _currentHP += amount;
+            _currentHP  = _currentHP > _maxHP ? _maxHP : _currentHP;
+        }
+
+        // Increase current mana by a specified amount
+        void increaseCurrentMana(int amount) {
+            _currentMana += amount;
+            _currentMana  = _currentMana > _maxMana ? _maxMana : _currentMana;
+        }
 
         void setCurrentHP(int currentHP) { _currentHP = currentHP; }
 
-        void increaseCurrentHP(int amount) {
-            _currentHP += amount;
-            _currentHP = _currentHP > _maxHP ? _maxHP : _currentHP;
-        } // Increase current HP by a specified amount
-
         void setCurrentMana(int currentMana) { _currentMana = currentMana; }
 
-        void increaseCurrentMana(int amount) {
-            _currentMana += amount;
-            _currentMana = _currentMana > _maxMana ? _maxMana : _currentMana;
-
-        } // Increase current mana by a specified amount
-
-        void setSkill(int index, Skill *skill) {
-            _skills[index] = skill;
-        } // Set a skill at a specific index
+        // Set a skill at a specific index
+        void setSkill(int index, Skill *skill) { _skills[index] = skill; }
 
         // Method to cast a skill on a target entity
         void attack(Entity *target);
@@ -117,4 +110,5 @@ class Entity {
             std::cout << "Level: " << _level << std::endl;
         }
 };
-#endif // ENTITY_H
+
+#include "Skill.hpp"

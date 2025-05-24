@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Dungeon.hpp"
+#include "Dungeon/Dungeon.hpp"
 #include "Enum/Direction.hpp"
 #include "Enum/Room.hpp"
-#include "Player.hpp"
 #include "Story.hpp"
-#include "UI/UI.hpp"
 
 #include <functional>
 #include <SFML/Graphics.hpp>

@@ -1,15 +1,14 @@
-#include "Dungeon.hpp"
+#include "Dungeon/Dungeon.hpp"
 
 #include <filesystem>
 #include <iostream>
 #include <random>
 #include <SFML/Graphics.hpp>
 
-Dungeon::Dungeon(UI &ui, Player &player)
-    : ui(&ui), player(&player), currentTurn(Person), phase(Phase::Opening), turnCount(1),
-      selectedSkillIndex(-1),
-      boss("Boss", 200, 200, 100, 100, 30, 10, 1), bossHitFlash(false),
-      playerHitFlash(false), openingDuration(1.5f), currentPhaseHandler(nullptr) {
+Dungeon::Dungeon(UI &ui, Player &player): ui(&ui), player(&player) {
+    // Load *font
+    font = &ui.getFont();
+
     // Load background
     backgroundTexture.loadFromFile("assets/background/Dungeon.png");
     backgroundSprite.setTexture(backgroundTexture);
@@ -52,84 +51,8 @@ void Dungeon::update() {
     if (currentPhaseHandler) currentPhaseHandler->update(this);
 }
 
-void Dungeon::render(sf::RenderWindow &window) {
-    window.draw(backgroundSprite);
-
-    // Font
-    sf::Font font;
-    font.loadFromFile("assets/fonts/Electrolize-Regular.ttf");
-
-    // Title
-    sf::Text title("Dungeon Test Mode", font, 48);
-    centerText(title, 960, 60);
-    title.setFillColor(sf::Color::White);
-    window.draw(title);
-
-    // Boss
-    bossSprite.setColor(bossHitFlash ? sf::Color::Red : sf::Color::White);
-    window.draw(bossSprite);
-    if (bossHitFlash) {
-        sf::RectangleShape redOverlay(sf::Vector2f(1920, 1080));
-        redOverlay.setFillColor(sf::Color(255, 0, 0, 80));
-        window.draw(redOverlay);
-    }
-    updateBossHitFlash();
-    std::string bossHpStr = "Boss HP: " + std::to_string(boss.getCurrentHP());
-    sf::Text    bossHpText(bossHpStr, font, 28);
-    bossHpText.setPosition(1500, 1000);
-    bossHpText.setFillColor(sf::Color::Red);
-    window.draw(bossHpText);
-
-    // Player hit flash
-    if (playerHitFlash) {
-        sf::RectangleShape redOverlay(sf::Vector2f(1920, 1080));
-        redOverlay.setFillColor(sf::Color(255, 0, 0, 100));
-        window.draw(redOverlay);
-    }
-
-    // Turn counter
-    sf::Text turnText("Turn: " + std::to_string(turnCount), font, 32);
-    turnText.setFillColor(sf::Color::Cyan);
-    turnText.setPosition(30, 30);
-    window.draw(turnText);
-
-    // Opening animation
-    if (phase == Phase::Opening) {
-        drawCenteredBoxWithText(window, "A powerful foe appears!", 700, 100, 960,
-                                440, font, 40, sf::Color(0, 0, 0, 220),
-                                sf::Color::Red);
-        drawCenteredBoxWithText(window, "Boss: Goku Drip Entity", 700, 80, 960,
-                                540, font, 36, sf::Color(0, 0, 0, 200),
-                                sf::Color::Yellow);
-        window.draw(bossSprite);
-        return;
-    }
-
-    // Delegate to phase handler
-    if (currentPhaseHandler) currentPhaseHandler->render(this, window, font);
-
-    // UI
-    ui->render(window);
-
-    if (player) {
-        std::string playerHpStr =
-            "Player HP: " + std::to_string(player->getCurrentHP());
-        sf::Text playerHpText(playerHpStr, font, 28);
-        playerHpText.setPosition(30, 1000);
-        playerHpText.setFillColor(sf::Color::Green);
-        window.draw(playerHpText);
-
-        std::string playerManaStr =
-            "Player Mana: " + std::to_string(player->getCurrentMana());
-        sf::Text playerManaText(playerManaStr, font, 28);
-        playerManaText.setPosition(30, 1040);
-        playerManaText.setFillColor(sf::Color::Cyan);
-        window.draw(playerManaText);
-    }
-}
-
 void Dungeon::reset() {
-    gameEnded               = false; 
+    gameEnded               = false;
     waitingForContinue      = false;
     selectedSkillIndex      = -1;
     pendingSkillIndex       = -1;
@@ -148,9 +71,9 @@ void Dungeon::reset() {
     // Reset boss stats
     boss.setCurrentHP(boss.getMaxHP());
 
-    if (player) {
-        player->setCurrentMana(player->getMaxMana());
-    }
+    // if (player) {
+    //     player->setCurrentMana(player->getMaxMana());
+    // }
 
     // Reset player stats
 }
@@ -172,16 +95,15 @@ void Dungeon::setPhase(Phase newPhase) {
 void Dungeon::drawCenteredBoxWithText(sf::RenderWindow  &window,
                                       const std::string &message, float boxWidth,
                                       float boxHeight, float centerX,
-                                      float centerY, const sf::Font &font,
-                                      unsigned int charSize, sf::Color boxColor,
-                                      sf::Color textColor) {
+                                      float centerY, unsigned int charSize,
+                                      sf::Color boxColor, sf::Color textColor) {
     sf::RectangleShape box(sf::Vector2f(boxWidth, boxHeight));
     box.setFillColor(boxColor);
     box.setOrigin(boxWidth / 2, boxHeight / 2);
     box.setPosition(centerX, centerY);
     window.draw(box);
 
-    sf::Text text(message, font, charSize);
+    sf::Text text(message, *font, charSize);
     centerText(text, centerX, centerY);
     text.setFillColor(textColor);
     window.draw(text);
@@ -210,11 +132,89 @@ void Dungeon::randomizeBossImage() {
         bossTexture.loadFromFile(bossImagePath);
     }
     bossSprite.setTexture(bossTexture);
-    bossSprite.setScale(0.3f, 0.3f);
-    bossSprite.setPosition(1920 / 2, 500);
+    float factor      = 0.4f;
+    float size_width  = bossTexture.getSize().x * factor;
+    float size_height = bossTexture.getSize().y * factor;
+    bossSprite.setScale(factor, factor);
+    bossSprite.setPosition((WINDOW_WIDTH - size_width) / 2,
+                           WINDOW_HEIGHT - size_height);
 }
 
 void Dungeon::showMessage(const std::string &msg) {
     ui->dialogue.setText(msg);
     ui->dialogue.open();
+}
+
+void Dungeon::render(sf::RenderWindow &window) {
+    window.draw(backgroundSprite);
+
+    // Title
+    sf::Text title("Dungeon Test Mode", *font, 48);
+    centerText(title, 960, 60);
+    title.setFillColor(sf::Color::White);
+    window.draw(title);
+
+    // Boss
+    bossSprite.setColor(bossHitFlash ? sf::Color::Red : sf::Color::White);
+    window.draw(bossSprite);
+    if (bossHitFlash) {
+        sf::RectangleShape redOverlay(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
+        redOverlay.setFillColor(sf::Color(255, 0, 0, 80));
+        window.draw(redOverlay);
+    }
+    updateBossHitFlash();
+    std::string bossHpStr = "Boss HP: " + std::to_string(boss.getCurrentHP());
+    sf::Text    bossHpText(bossHpStr, *font, 28);
+    bossHpText.setPosition(1500, 1000);
+    bossHpText.setFillColor(sf::Color::Red);
+    window.draw(bossHpText);
+
+    // Player hit flash
+    if (playerHitFlash) {
+        sf::RectangleShape redOverlay(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
+        redOverlay.setFillColor(sf::Color(255, 0, 0, 100));
+        window.draw(redOverlay);
+    }
+
+    // Turn counter
+    sf::Text turnText("Turn: " + std::to_string(turnCount), *font, 32);
+    turnText.setFillColor(sf::Color::Cyan);
+    turnText.setPosition(30, 30);
+    window.draw(turnText);
+
+    // Opening animation
+    if (phase == Phase::Opening) {
+        drawCenteredBoxWithText(window, "A powerful foe appears!", 700, 100, 960,
+                                440, 40, sf::Color(0, 0, 0, 220), sf::Color::Red);
+        drawCenteredBoxWithText(window, "Boss: Goku Drip Entity", 700, 80, 960,
+                                540, 36, sf::Color(0, 0, 0, 200),
+                                sf::Color::Yellow);
+        // window.draw(bossSprite);
+        return;
+    }
+
+    // Delegate to phase handler
+    if (currentPhaseHandler) currentPhaseHandler->render(this, window);
+
+    if (player) {
+        float x = 1700;
+        float y = 30;
+
+        std::string playerHpStr =
+            "Player HP: " + std::to_string(player->getCurrentHP());
+        sf::Text playerHpText(playerHpStr, *font, 28);
+        playerHpText.setPosition(x, y);
+        playerHpText.setFillColor(sf::Color::Green);
+        window.draw(playerHpText);
+
+        std::string playerManaStr =
+            "Player Mana: " + std::to_string(player->getCurrentMana());
+        sf::Text playerManaText(playerManaStr, *font, 28);
+        playerManaText.setPosition(x, y + 40);
+        playerManaText.setFillColor(sf::Color::Cyan);
+        window.draw(playerManaText);
+    }
+
+    // UI
+    ui->render(window);
 }

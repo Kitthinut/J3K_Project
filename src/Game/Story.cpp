@@ -1,4 +1,4 @@
-#include "Story.hpp"
+#include "Game/Story.hpp"
 
 #include <chrono>
 #include <iostream>

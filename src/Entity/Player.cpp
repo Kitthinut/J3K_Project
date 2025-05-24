@@ -1,4 +1,4 @@
-#include "Player.hpp"
+#include "Entity/Player.hpp"
 
 #include <iostream>
 
@@ -45,34 +45,43 @@ const sf::FloatRect Player::getBounds() {
 void Player::movement() {
     // Movement logic (updating position and direction)
     sf::Vector2f movement(0.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        movement.y -= PLAYER_SPEED * _dt;
-        animation(Up);
+
+    bool up    = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+    bool down  = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+    bool left  = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+    bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+
+    if (up) movement.y -= 1.f;
+    if (down) movement.y += 1.f;
+    if (left) movement.x -= 1.f;
+    if (right) movement.x += 1.f;
+
+    // Normalize for diagonal movement
+    if (movement.x != 0.f && movement.y != 0.f) {
+        movement *= 0.7071f;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        movement.y += PLAYER_SPEED * _dt;
-        animation(Down);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        movement.x -= PLAYER_SPEED * _dt;
-        animation(Left);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        movement.x += PLAYER_SPEED * _dt;
-        animation(Right);
-    }
+
+    // Apply speed and delta time
+    movement *= PLAYER_SPEED * _dt;
+
+    // Determine direction for animation (priority: horizontal over vertical)
+    if (movement.x < 0) animation(Left);
+    else if (movement.x > 0) animation(Right);
+    else if (movement.y < 0) animation(Up);
+    else if (movement.y > 0) animation(Down);
 
     _next_bounds       = getBounds();
     _next_bounds.left += movement.x;
     _next_bounds.top  += movement.y;
 }
 
-void Player::animation(Direction direction) {
+void Player::animation(const Direction direction) {
     // Update animation frame if the player is moving
     _animation_timer += _dt;
     if (_animation_timer < ANIMATION_SPEED) return;
     _animation_timer = 0.0f;
-    _current_frame  = (_current_frame + 1) % 4; // Loop through 4 frames
+
+    _current_frame = (_current_frame + 1) % 4; // Loop through 4 frames
     _sprite.setTextureRect(sf::IntRect(_current_frame * PLAYER_FRAME,
                                        direction * PLAYER_FRAME, PLAYER_FRAME,
                                        PLAYER_FRAME));

@@ -1,7 +1,4 @@
-#include "BattlePhase.hpp"
-
-#include "Dungeon.hpp"
-#include "Skill.hpp"
+#include "Dungeon/BattlePhase.hpp"
 
 #include <iostream>
 
@@ -57,8 +54,7 @@ void PlayerPickPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
 
 void PlayerPickPhase::update(Dungeon *) {}
 
-void PlayerPickPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
-                             sf::Font &font) {
+void PlayerPickPhase::render(Dungeon *dungeon, sf::RenderWindow &window) {
     Player *player   = dungeon->getPlayer();
     float   y        = 900;
     int     selected = dungeon->getSelectedSkillIndex();
@@ -83,26 +79,25 @@ void PlayerPickPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
                     "Dmg: " + std::to_string(skill->getBaseDamage());
 
                 dungeon->drawCenteredBoxWithText(window, skillStr, 200, 40,
-                                                 200 + i * 300, y, font, 20,
-                                                 boxColor, textColor);
+                                                 200 + i * 300, y, 20, boxColor,
+                                                 textColor);
                 dungeon->drawCenteredBoxWithText(
-                    window, manaStr, 100, 30, 200 + i * 300, y + 30, font, 16,
+                    window, manaStr, 100, 30, 200 + i * 300, y + 30, 16,
                     sf::Color(0, 0, 0, 120), sf::Color::Cyan);
                 dungeon->drawCenteredBoxWithText(
-                    window, dmgStr, 100, 30, 200 + i * 300, y + 60, font, 16,
+                    window, dmgStr, 100, 30, 200 + i * 300, y + 60, 16,
                     sf::Color(0, 0, 0, 120), sf::Color::Red);
             }
         }
         std::string manaStr = "Mana: " + std::to_string(player->getCurrentMana());
-        dungeon->drawCenteredBoxWithText(window, manaStr, 200, 40, 200, 1000, font,
-                                         20, sf::Color(0, 0, 0, 180),
-                                         sf::Color::Cyan);
+        dungeon->drawCenteredBoxWithText(window, manaStr, 200, 40, 200, 1000, 20,
+                                         sf::Color(0, 0, 0, 180), sf::Color::Cyan);
 
         // Show reminder if a skill is selected
         if (selected != -1) {
             dungeon->drawCenteredBoxWithText(
-                window, "Press E to select this skill", 400, 40, 960, 850, font,
-                24, sf::Color(255, 255, 255, 200), sf::Color::Black);
+                window, "Press E to select this skill", 400, 40, 960, 850, 24,
+                sf::Color(255, 255, 255, 200), sf::Color::Black);
         }
     }
 }
@@ -153,11 +148,10 @@ void PlayerAttackPhase::update(Dungeon *dungeon) {
     }
 }
 
-void PlayerAttackPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
-                               sf::Font &font) {
+void PlayerAttackPhase::render(Dungeon *dungeon, sf::RenderWindow &window) {
     dungeon->drawCenteredBoxWithText(
-        window, "Player attacks! (Press SPACE to confirm)", 800, 80, 960, 800,
-        font, 32, sf::Color(0, 0, 0, 200), sf::Color::White);
+        window, "Player attacks! (Press SPACE to confirm)", 800, 80, 960, 800, 32,
+        sf::Color(0, 0, 0, 200), sf::Color::White);
 }
 
 // Opponent picks a skill (random)
@@ -178,11 +172,10 @@ void OpponentPickPhase::update(Dungeon *dungeon) {
     }
 }
 
-void OpponentPickPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
-                               sf::Font &font) {
+void OpponentPickPhase::render(Dungeon *dungeon, sf::RenderWindow &window) {
     dungeon->drawCenteredBoxWithText(
-        window, "Boss attacks! (Press SPACE to continue)", 800, 80, 960, 800, font,
-        32, sf::Color(0, 0, 0, 200), sf::Color::Red);
+        window, "Boss attacks! (Press SPACE to continue)", 800, 80, 960, 800, 32,
+        sf::Color(0, 0, 0, 200), sf::Color::Red);
 }
 
 void OpponentPickPhase::handleEvent(Dungeon *dungeon, const sf::Event &event,
@@ -203,9 +196,7 @@ void OpponentAttackPhase::update(Dungeon *dungeon) {
     dungeon->setPhase(Dungeon::Phase::PlayerPick);
 }
 
-void OpponentAttackPhase::render(Dungeon *dungeon, sf::RenderWindow &window,
-                                 sf::Font &font) {
+void OpponentAttackPhase::render(Dungeon *dungeon, sf::RenderWindow &window) {
     dungeon->drawCenteredBoxWithText(window, "Boss attacks!", 800, 80, 960, 800,
-                                     font, 32, sf::Color(0, 0, 0, 200),
-                                     sf::Color::Red);
+                                     32, sf::Color(0, 0, 0, 200), sf::Color::Red);
 }

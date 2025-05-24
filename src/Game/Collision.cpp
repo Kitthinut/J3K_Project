@@ -1,4 +1,4 @@
-#include "Collision.hpp"
+#include "Game/Collision.hpp"
 
 Collision::Collision() { loadObstacles(); }
 
@@ -122,10 +122,9 @@ void Collision::loadObstacles() {
 
     // Dorm Interactables
     room_interactables[Room::Dorm] = {
-        {  {467, 592, 221, 39},   Dining},
-        {  {297, 459, 299, 42}, Wardrobe},
-        { {1250, 346, 55, 282},      Bed},
-        {{1297, 800, 326, 106}, Computor}
+        // {  {467, 592, 221, 39},   Dining},
+        { {297, 459, 299, 42}, Wardrobe},
+        {{1250, 346, 55, 282},      Bed},
     };
 
     // Classroom Interactables

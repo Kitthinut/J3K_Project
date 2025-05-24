@@ -1,4 +1,4 @@
-#include "Game.hpp"
+#include "Game/Game.hpp"
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
@@ -73,23 +73,19 @@ void Game::modifyStat(const int direction) {
 void Game::handleChoiceSelection() {
     const int selected = ui.popup_choice.getSelected();
     switch (player.GetInteract()) {
-        case Computor:
-            std::cout << "Enter Mini-Dungeon" << std::endl;
-            player.setMoveable(true);
-            break;
         case Wardrobe:
             std::cout << "You chose to upgrade stats!" << std::endl;
             ui.popup_upgrade.open();
             break;
-        case Dining:
-            std::cout << "Dining" << std::endl;
-            switch (selected) {
-                case 0 : player.increaseCurrentHP(30); break;
-                case 1 : player.increaseCurrentMana(10); break;
-                default: break;
-            }
-            player.setMoveable(true);
-            break;
+        // case Dining:
+        //     std::cout << "Dining" << std::endl;
+        //     switch (selected) {
+        //         case 0 : player.increaseCurrentHP(30); break;
+        //         case 1 : player.increaseCurrentMana(10); break;
+        //         default: break;
+        //     }
+        //     player.setMoveable(true);
+        //     break;
         case Bed:
             std::cout << "Bed" << std::endl;
             switch (selected) {
@@ -117,22 +113,17 @@ void Game::handleChoiceSelection() {
 
 void Game::openPopupForInteraction() {
     switch (player.GetInteract()) {
-        case Computor:
-            ui.popup_choice.open();
-            ui.popup_choice.setChoices({"Enter Mini-Dungeon"});
-            player.setMoveable(false);
-            break;
         case Wardrobe:
             ui.popup_choice.open();
             ui.popup_choice.setChoices({"Upgrade Stats"});
             player.setMoveable(false);
             break;
-        case Dining:
-            ui.popup_choice.open();
-            ui.popup_choice.setChoices({"[food left] Eat Food (+30 HP)",
-                                        "Drink Water (+10 HP)", "Drink Potion"});
-            player.setMoveable(false);
-            break;
+        // case Dining:
+        //     ui.popup_choice.open();
+        //     ui.popup_choice.setChoices({"[food left] Eat Food (+30 HP)",
+        //                                 "Drink Water (+10 HP)", "Drink Potion"});
+        //     player.setMoveable(false);
+        //     break;
         case Bed:
             ui.popup_choice.open();
             ui.popup_choice.setChoices({"Sleep (+50 HP)", "Nap (+20 HP)"});
@@ -165,6 +156,7 @@ void Game::processEvents() {
                 player.setMoveable(true);
                 if (player.getCurrentHP() <= 0) {
                     player.setCurrentHP(player.getMaxHP() / 2);
+                    player.setCurrentMana(player.getMaxMana());
                 }
                 return;
             }
