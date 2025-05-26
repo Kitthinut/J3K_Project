@@ -13,32 +13,26 @@ Story::Story() {
     }
 }
 
+// Function to display the introduction story
 void Story::introduction(sf::RenderWindow &window) {
     std::vector<std::string> story = {
-        "You are just a regular engineering student, living the daily grind... "
-        ";-;",
-        "Late nights, tough exams, endless assignments... T_T",
-        "But one day, something strange happens... o_O",
-        "You find yourself trapped in a time loop, stuck reliving your school "
-        "days... >_<",
-        "Every time you enter class, the world transforms-",
-        "Turning into a mysterious dungeon filled with challenges... O_O",
-        "To pass your subjects, you must defeat powerful Chinese bosses-",
-        "Guardians of your grades. >:(",
-        "But beware: before facing the final boss, you must overcome the Teaching "
-        "Assistants-",
-        "Smaller, tricky foes blocking your way... ;-;",
-        "Fail to defeat the TAs three times, and the loop consumes you-",
-        "Ending your journey forever... :'(",
-        "Succeed in battling both TAs and bosses, and you gain EXP and coins-",
-        "To upgrade your skills: attack, defense, and HP! (^_^)/",
-        "Win or lose, your battles affect your real-world grades.",
-        "Can you survive the loop, defeat the bosses, and break free to the light "
-        "of graduation? \\o/",
-        "The time loop won't affect reality if you finish your boss fights,",
-        "but fail, and you'll face the same trials all over again... -_-",
+        "You are a robotics engineering student, just starting Year 1... >_<",
+        "Late nights, confusing lectures, endless tasks... T_T",
+        "One morning, something strange happens... o_O",
+        "Every time you enter class, the world changes.",
+        "Your classroom turns into a Chinese-style...",
+        "World???",
+        "Filled with traps, trials, and ancient guardians. >_<",
+        "You are now caught in a mysterious 40-day loop.",
+        "Each day, you must survive classes.",
+        "Fight, survive, and gather points to grow stronger.",
+        "Win battles to upgrade your stats: attack, defense, HP... (^_^)/",
+        "Failing doesn't reset the loop... but it slows you down. -_-",
+        "The loop doesn't care how tired you are... it keeps going.",
+        "Only by surviving 40 days can you escape. \\o/",
+        "Will you endure the grind and power through to the end?",
         "...",
-        "Press SPACE to begin your journey... >_<",
+        "Press SPACE to begin your journey. >_<"
     };
 
     sf::Text text;
@@ -125,6 +119,115 @@ void Story::introduction(sf::RenderWindow &window) {
     }
 }
 
+void Story::showEnding(sf::RenderWindow &window) {
+    std::vector<std::string> lines = {"You survived all 40 days.",
+                                      "The classroom fades back to normal...",
+                                      "The dungeons disappear.",
+                                      "The pressure is gone.",
+                                      "You're finally free...?",
+                                      "...",
+                                      "Or maybe...",
+                                      "It's just the beginning. o_o"};
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(30);
+    text.setFillColor(sf::Color::White);
+
+    sf::RectangleShape bg(sf::Vector2f(window.getSize().x, window.getSize().y));
+    bg.setFillColor(sf::Color::Black);
+
+    for (const auto &line : lines) {
+        bool next = false;
+        while (!next && window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                    return;
+                }
+                if (event.type == sf::Event::KeyPressed &&
+                    event.key.code == sf::Keyboard::Space) {
+                    next = true;
+                }
+            }
+
+            window.clear();
+            window.draw(bg);
+
+            text.setString(line);
+            sf::FloatRect textRect = text.getLocalBounds();
+            text.setOrigin(textRect.left + textRect.width / 2.0f,
+                           textRect.top + textRect.height / 2.0f);
+            text.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+            window.draw(text);
+            window.display();
+        }
+
+        // Wait for spacebar release
+        while (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
+               window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                    return;
+                }
+            }
+
+            window.clear();
+            window.draw(bg);
+            window.draw(text);
+            window.display();
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    }
+
+    // TO BE CONTINUED - red and dramatic
+    sf::Text finalText;
+    finalText.setFont(font);
+    finalText.setString("TO BE CONTINUED");
+    finalText.setCharacterSize(42);
+    finalText.setFillColor(sf::Color(255, 60, 60)); // red
+    sf::FloatRect bounds = finalText.getLocalBounds();
+    finalText.setOrigin(bounds.left + bounds.width / 2.0f,
+                        bounds.top + bounds.height / 2.0f);
+    finalText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+    sf::Text note;
+    note.setFont(font);
+    note.setString("(if we have to OwO)");
+    note.setCharacterSize(24);
+    note.setFillColor(sf::Color::White);
+    sf::FloatRect noteBounds = note.getLocalBounds();
+    note.setOrigin(noteBounds.left + noteBounds.width / 2.0f,
+                   noteBounds.top + noteBounds.height / 2.0f);
+    note.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f + 50);
+
+        
+    // Display the final text for 3 seconds
+    sf::Clock clock;
+    float     elapsed = 0;
+    while (elapsed < 3.0f && window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+                return;
+            }
+        }
+
+        elapsed += clock.restart().asSeconds();
+        window.clear();
+        window.draw(bg);
+        window.draw(finalText);
+        window.draw(note);
+        window.display();
+    }
+}
+
+// Function to display the credits at the end of the game
 void Story::showCredits(sf::RenderWindow &window) {
     std::vector<std::string> credits = {
         "        FIBO XI Dungeon",
@@ -140,6 +243,7 @@ void Story::showCredits(sf::RenderWindow &window) {
         "",
         "       Classroom & Lobby Systems:",
         "       Kitthinut Changtham",
+        "       Chawanakorn Jenkit",
         "",
         "       Dungeon & Boss Design:",
         "       Pirakan You",
@@ -152,7 +256,8 @@ void Story::showCredits(sf::RenderWindow &window) {
         "",
         "       Balance & System Improvement:",
         "       Sarayuth Sainiyom",
-        ""
+        "       Pirakan You",
+        "",
         "       Code Integration & Cleanup:",
         "       Chawanakorn Jenkit",
         "",
@@ -172,6 +277,7 @@ void Story::showCredits(sf::RenderWindow &window) {
         "",
         "       Thank you for playing! T_T",
         "       Good luck escaping the time loop!",
+        "       (If You Want To Though)",
         "",
         "       Press SPACE to skip..."};
 

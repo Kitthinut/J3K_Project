@@ -88,10 +88,10 @@ class Entity {
         void increaseLevel() { ++_level; }
 
         // Increase max HP by a specified amount
-        void increaseMaxHP(int amount) { _maxHP += amount; }
+        void increaseMaxHP(int amount);
 
         // Increase max mana by a specified amount
-        void increaseMaxMana(int amount) { _maxMana += amount; }
+        void increaseMaxMana(int amount);
 
         // Increase attack power by a specified amount
         void increaseAttackPower(int amount) { _attackPower += amount; }

@@ -34,6 +34,7 @@ void PlayerPickPhase::handleEvent(const sf::Keyboard::Key &key, bool &exit) {
     }
 }
 
+// Render the player pick phase
 void PlayerPickPhase::render(sf::RenderWindow &window) {
     if (dungeon->isGameEnded()) return;
 
@@ -114,6 +115,7 @@ void PlayerAttackPhase::handleEvent(const sf::Keyboard::Key &key, bool &) {
     }
 }
 
+// Render the player attack phase
 void PlayerAttackPhase::render(sf::RenderWindow &window) {
     if (dungeon->isGameEnded()) return;
     dungeon->drawCenteredBoxWithText(
@@ -139,6 +141,7 @@ void OpponentPickPhase::handleEvent(const sf::Keyboard::Key &key, bool &) {
     }
 }
 
+// Render the opponent pick phase
 void OpponentPickPhase::render(sf::RenderWindow &window) {
     if (dungeon->isGameEnded()) return;
     dungeon->drawCenteredBoxWithText(

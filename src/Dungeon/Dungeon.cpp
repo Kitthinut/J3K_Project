@@ -172,12 +172,6 @@ void Dungeon::showMessage(const std::string &msg) {
 void Dungeon::render(sf::RenderWindow &window) {
     window.draw(backgroundSprite);
 
-    // Title
-    // sf::Text title("Class", *font, 48);
-    // centerText(title, WINDOW_WIDTH / 2, 60);
-    // title.setFillColor(sf::Color::White);
-    // window.draw(title);
-
     updateHitFlash();
 
     // Boss

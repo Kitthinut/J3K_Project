@@ -19,6 +19,7 @@ void Entity::attack(Entity *target) {
     target->increaseCurrentHP(-_attackPower); // Apply the damage to the target
 }
 
+// Method to set a skill at a specific index
 void Entity::castSkill(int skillIndex, Entity *target) {
     if (skillIndex < 0 || skillIndex >= 5) {
         std::cout << "Invalid skill index!" << std::endl;
@@ -42,11 +43,27 @@ void Entity::castSkill(int skillIndex, Entity *target) {
     }
 }
 
+// Increase max HP by a specified amount
+void Entity::increaseMaxHP(int amount) {
+    _maxHP     += amount;
+    _currentHP  = _currentHP > _maxHP ? _maxHP : _currentHP < 0 ? 0 : _currentHP;
+}
+
+// Increase max mana by a specified amount
+void Entity::increaseMaxMana(int amount) {
+    _maxMana     += amount;
+    _currentMana  = _currentMana > _maxMana ? _maxMana
+                    : _currentMana < 0      ? 0
+                                            : _currentMana;
+}
+
+// Function to increase HP by a specified amount
 void Entity::increaseCurrentHP(int amount) {
     _currentHP += amount;
     _currentHP  = _currentHP > _maxHP ? _maxHP : _currentHP < 0 ? 0 : _currentHP;
 }
 
+// Function to increase max Mana by a specified amount
 void Entity::increaseCurrentMana(int amount) {
     _currentMana += amount;
     _currentMana  = _currentMana > _maxMana ? _maxMana

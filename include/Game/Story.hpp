@@ -11,4 +11,5 @@ class Story {
 
         void introduction(sf::RenderWindow &window);
         void showCredits(sf::RenderWindow &window);
+        void showEnding(sf::RenderWindow &window);
 };

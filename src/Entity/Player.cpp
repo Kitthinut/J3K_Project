@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+// Constructor for Player class
 Player::Player(sf::Vector2f position, std::string name, int maxHP, int currentHP,
                int maxMana, int currentMana, int attackPower, int defensePower,
                int level)
@@ -19,15 +20,17 @@ Player::Player(sf::Vector2f position, std::string name, int maxHP, int currentHP
     setSkill(0, new Skill("Normal Attact", 0, 0, 10, 1.0f, 0));
     setSkill(1, new Skill("Stone Crush", 15, 2, 18, 1.0f, 0));
     setSkill(2, new Skill("Tidal Wave", 20, 3, 25, 1.0f, 0));
-    setSkill(3, new Skill("Gale Strike", 13, 1, 14, 1.0f, 0));
-    setSkill(4, new Skill("Inferno Blast", 24, 4, 35, 1.0f, 0));
+    setSkill(3, new Skill("Gale Strike", 12, 1, 15, 1.0f, 0));
+    setSkill(4, new Skill("Inferno Blast", 24, 4, 45, 1.0f, 0));
 }
 
+// Set the player's position and update the sprite's position
 void Player::setPosition(sf::Vector2f position) {
     this->_position = position;
     _sprite.setPosition(position);
 }
 
+// Set the player's experience points
 void Player::increaseEXP(int amount) {
     _exp += amount;
     if (_exp >= _exp_to_level) {
@@ -53,6 +56,7 @@ const sf::FloatRect Player::getBounds() {
     return bounds;
 }
 
+// Get the next bounds based on the current position and movement
 void Player::movement() {
     // Movement logic (updating position and direction)
     bool up    = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
@@ -86,6 +90,7 @@ void Player::movement() {
     _next_bounds.top  += movement.y;
 }
 
+// Update the player's animation based on the current direction
 void Player::animation(const Direction direction) {
     // Update animation frame if the player is moving
     _animation_timer += _dt;
@@ -98,8 +103,10 @@ void Player::animation(const Direction direction) {
                                        PLAYER_FRAME));
 }
 
+// Check if the player can warp to a new room
 Room Player::warpTo() { return _collision.hitWarps(getBounds()); }
 
+// Check for interactables and return the type of interaction
 void Player::update() {
     sf::Time deltaTime = _clock.restart();
     _dt                = deltaTime.asSeconds();
@@ -116,6 +123,7 @@ void Player::update() {
     }
 }
 
+// Draw the player sprite and collision boxes
 void Player::draw(sf::RenderWindow &window) {
     _interact = _collision.onInteractables(getBounds());
     _collision.draw(window, _interact, false);

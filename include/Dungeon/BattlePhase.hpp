@@ -54,6 +54,7 @@ class OpponentPickPhase: public IBattlePhaseHandler {
         void render(sf::RenderWindow &) override;
 };
 
+// Opponent attacks the player
 class OpponentAttackPhase: public IBattlePhaseHandler {
     public:
         OpponentAttackPhase(Dungeon *dungeon, Player *player)
