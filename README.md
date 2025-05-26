@@ -3,10 +3,21 @@
 ## 📘 Game Manual / Explanation
 
 **Overview:**  
-*FIBO XI Dungeon* is a turn-based RPG where you play as an engineering student trapped in a surreal academic dungeon.  
-Instead of a fixed time limit, the game runs as an endless loop as it's still in development but has a playable version 1.  
-Your goal is to survive as long as possible. Each room presents different challenges, featuring FIBO's subject-themed boss battles and life-planning elements.  
-Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive. There is no escape — only endurance.
+*FIBO XI Dungeon* is a turn-based RPG where you play as a stressed (but brave!) engineering student trapped in a surreal, never-ending academic dungeon.  
+Your mission? Survive each bizarre room, defeat subject-themed bosses, and plan your life one subject at a time.
+
+This game is crafted from scratch with ❤️ and **no game engine required** — we use only **SFML (Simple and Fast Multimedia Library)** for rendering 2D graphics and handling input.  
+The entire codebase is **object-oriented**, built with C++ classes and clean inheritance to ensure modularity, maintainability, and scalability.
+
+All art and assets are lovingly hand-made by our team — simple, stylish, and full of personality!
+
+**Key Features:**
+- Endless gameplay loop (for now) — survive as long as you can!
+- Turn-based battles with unique skill mechanics and stat upgrades.
+- Character interaction, room transitions, and object interactions.
+- Full keyboard controls and a clean cartoonish UI.
+- Custom upgrade system for HP, MANA, DEF, ATK.
+
 
 ### 🎮 How to Play:
 - Use `W`, `A`, `S`, `D` to move.
