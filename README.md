@@ -93,6 +93,7 @@ Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive.
 | Move Down         | `S`                |
 | Move Left         | `A`                |
 | Move Right        | `D`                |
+| Run               | `LShift`           |
 | Interact          | `Space`            |
 | Character Stats   | `C`                |
 | Exit Popup Window | `Esc`              |
