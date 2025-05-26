@@ -3,97 +3,114 @@
 ## 📘 Game Manual / Explanation
 
 **Overview:**  
-*FIBO XI Dungeon* is a turn-based RPG where you play as an engineering student trapped in a surreal academic dungeon. 
-Instead of a fixed time limit, the game runs as an endless loop as it's still in development but able to export out as version 1.
-Your goal is to survive as long as possible. Each room presents different challenges, featuring FIBO's subject-themed boss battles and planning on your life. 
+*FIBO XI Dungeon* is a turn-based RPG where you play as an engineering student trapped in a surreal academic dungeon.  
+Instead of a fixed time limit, the game runs as an endless loop as it's still in development but has a playable version 1.  
+Your goal is to survive as long as possible. Each room presents different challenges, featuring FIBO's subject-themed boss battles and life-planning elements.  
 Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive. There is no escape — only endurance.
 
+### 🎮 How to Play:
+- Use `W`, `A`, `S`, `D` to move.
+- Use `LShift` to run.
+- Press `Space` to interact with objects.
+- Engage in turn-based battles with subject-themed enemies.
+- Access stats with `C` and exit additional popup with `Esc`.
+- Upgrade your HP and Mana in the dorm room, at the wardrobe.
 
-**How to Play:**
-- Describe the controls (e.g., arrow keys to move, space to interact).
-- Explain the game mechanics and flow.
-- Mention important actions players can take (e.g., battling enemies, collecting items).
+### 🧮 Scoring System:
+- No traditional score — your progress is measured by:
+  - Number of bosses defeated.
+  - Days survived.
+  - Stats progression and upgrades obtained.
 
-**Scoring System (if applicable):**
-- Describe how the score is calculated.
-- Mention any win/lose conditions.
-
-**Rules:**
-- List key rules that guide gameplay.
-
+### 📏 Rules:
+- You lose a battle if your HP reaches 0, but you will revive with 50% of your max HP.
+- All actions (interacting, fighting, resting) consume time.
+- Skills consume different amounts of Mana depending on their power.
+- Using normal attacks during battle helps restore Mana.
+- You can only upgrade your stats when you're inside your dorm room.
+- Defeating 5 bosses automatically starts a new day.
+- Sleeping also triggers the start of a new day.
+- Each day has 5 activity slots:
+  - Fighting a boss consumes 1 slot.
+  - Resting consumes 1 slot.
 
 ---
 
 ## ✅ Requirements
 
 ### Functional Requirements
-- The player can move the character using the keyboard.
-- The game must display health/mana/exp bars.
-- Each room must allow interaction with objects.
-- Battles and upgrades must be functional and reactive.
+- ✅ Character movement via keyboard input.
+- ✅ Visible HP / Mana / EXP bars in-game.
+- ✅ Interactions with NPCs and objects in each room.
+- ✅ Functional turn-based battle and upgrade mechanics.
 
 ### Non-Functional Requirements
-- The game should run on Windows properly.
-- The game must maintain at least 60 FPS.
-- UI should be responsive and readable at 1920x1080 resolution.
-- Load times between rooms should be under 2 seconds.
-- Visuals must not hinder accessibility.
-- The game size must not be too large (not more than 500 MB).
+- 🪟 Runs smoothly on Windows 10/11.
+- 🚀 Maintains 60 FPS minimum.
+- 🖥️ UI scales correctly at 1920x1080 resolution.
+- ⚡ Room transitions load within 2 seconds.
+- 🧑‍🦯 No flashing effects that hinder accessibility.
+- 💾 Game size < 500 MB.
 
 ---
 
 ## 🧑‍💻 User Manual
 
 ### Installation & Setup
-**How to Play:**
+
 1. **Download & Launch:**
-   - Extract the game folder from the provided ZIP file.
-   - Run the `FIBO_XI_Dungeon.exe` file.
+   - Download the game ZIP.
+   - Extract to any folder.
+   - Run `FIBO_XI_Dungeon.exe`.
 
-2. **Game Objective:**
-   - Survive in an endless dungeon as an engineering student.
-   - Navigate rooms, battle subject-themed bosses, and manage your stats.
+2. **Objective:**
+   - Survive in an infinite academic dungeon.
+   - Defeat subject-themed bosses.
+   - Upgrade your stats and endure.
 
-3. **Gameplay Basics:**
-   - Move around the dungeon using keyboard controls.
-   - Interact with objects and NPCs to trigger events.
-   - Engage in turn-based battles using attacks, skills, and inventory items.
-   - Upgrade your HP and Mana to survive longer.
+3. **Core Gameplay:**
+   - Move freely using the keyboard.
+   - Interact with dorm objects, NPCs, and boss rooms.
+   - Engage in battles and upgrade health/mana.
+   - Manage your day count and plan each move.
 
 4. **Upgrades:**
-   - Defeating bosses may reward you with upgrades or helpful items.
-   - Upgrade your stats in your dorm.
-   - The maximum HP is 100.
-   - The maximum Mana is 100.
+   - Upgrades are available via dorm room terminal.
+   - Each boss gives you EXP and sometimes items.
+   - Max HP and Mana are capped at 100 in v.1.
 
 5. **End Condition:**
-   - The game continues indefinitely — you play until your HP reaches zero.
-   - Aim to survive as long as you can!
+   - Endless loop until you fall (HP = 0).
+   - Track your survival stats manually.
 
+---
 
-### Controls
-| Action          | Key/Button         |
-|-----------------|--------------------|
-| Move Up         | `W`                |
-| Move Down       | `S`                |
-| Move Left       | `A`                |
-| Move Right      | `D`                |
-| Character Stats | `C`                |
-| Interact        | `Space` or `E`     |
-| Pause / Menu    | `Esc`              |
+### ⌨️ Controls
 
-### How to Play
-- Start the game and read the introdubction scene.
-- Use the movement keys to explore the environment.
-- Press `Space` near objects or characters to interact.
-- Engage in battles when triggered.
-- Use strategy to defeat bosses and manage resources.
-- Progress through rooms until the game is complete.
+| Action            | Key/Button         |
+|-------------------|--------------------|
+| Move Up           | `W`                |
+| Move Down         | `S`                |
+| Move Left         | `A`                |
+| Move Right        | `D`                |
+| Interact          | `Space`            |
+| Character Stats   | `C`                |
+| Exit Popup Window | `Esc`              |
 
 ---
 
 ## ✨ Credits
 
-- 6703 | 6707 | 6731 | 6740
-- Art  : 6703
-- SFML Library included
+| Role               | Contributor IDs                           |
+|--------------------|-------------------------------------------|
+| Game Design        | 6703, 6707, 6731                          |
+| Art & UI           | 6703                                      |
+| Programming        | 6707, 6731, 6740                          |
+| Testing & Balance  | All Team Members                          |
+| Library Used       | SFML (Simple and Fast Multimedia Library) |
+
+> Inspired by FIBO Life, Engineered by pain, Built with ❤️
+
+---
+
+> _Version 1.0 — Endless loop, not completed, but full of soul._
