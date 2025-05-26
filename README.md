@@ -38,19 +38,21 @@ Manage your HP and Mana, use items wisely, and upgrade your stats to stay alive.
 
 ## ✅ Requirements
 
-### Functional Requirements
-- ✅ Character movement via keyboard input.
-- ✅ Visible HP / Mana / EXP bars in-game.
-- ✅ Interactions with NPCs and objects in each room.
-- ✅ Functional turn-based battle and upgrade mechanics.
+### 🔧 Functional Requirements 
 
-### Non-Functional Requirements
-- 🪟 Runs smoothly on Windows 10/11.
-- 🚀 Maintains 60 FPS minimum.
-- 🖥️ UI scales correctly at 1920x1080 resolution.
-- ⚡ Room transitions load within 2 seconds.
-- 🧑‍🦯 No flashing effects that hinder accessibility.
-- 💾 Game size < 500 MB.
+- 🎮 The player can control the character using the keyboard. Movement = freedom!
+- ❤️ The game must show HP (Health), MP (Mana), and EXP bars clearly — so you always know how close you are to greatness... or doom.
+- 🛋️ Every room must allow interaction with cute (and possibly suspicious) objects like desks, appliances, or mystery consoles.
+- ⚔️ Battles and stat upgrades must work seamlessly — tap that key, and feel the response instantly!
+- ✨ Skills must have unique effects. Choose wisely — some sparkle, some boom.
+
+### 🧠 Non-Functional Requirements 
+
+- 🪟 The game must run smoothly on Windows — no hiccups, no drama.
+- ⚡ A buttery-smooth 60 FPS is a must — your adventure deserves no lag!
+- 🖼️ UI elements should be crisp and readable at 1920x1080. No squinting allowed.
+- 🚪 Loading between rooms should take no more than 2 seconds — we’re speedrunning, baby!
+- 📦 The game and its updates should stay light — no 10 GB surprises here.
 
 ---
 
