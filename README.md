@@ -11,13 +11,11 @@ The entire codebase is **object-oriented**, built with C++ classes and clean inh
 
 All art and assets are lovingly hand-made by our team — simple, stylish, and full of personality!
 
-**Key Features:**
-- Endless gameplay loop (for now) — survive as long as you can!
-- Turn-based battles with unique skill mechanics and stat upgrades.
-- Character interaction, room transitions, and object interactions.
-- Full keyboard controls and a clean cartoonish UI.
-- Custom upgrade system for HP, MANA, DEF, ATK.
-
+  **Development Approach:**
+- 🧱 Built using **SFML (C++ only)** — no external game engines involved.
+- 🧠 Clean **OOP structure** — all game entities are classes with inheritance where needed 
+- 🎨 Original artwork — designed by the team to match the theme and tone.
+- 🔄 Game loop and mechanics handcrafted with attention to gameplay feel and responsiveness.
 
 ### 🎮 How to Play:
 - Use `W`, `A`, `S`, `D` to move.
@@ -128,3 +126,5 @@ All art and assets are lovingly hand-made by our team — simple, stylish, and f
 ---
 
 > _Version 1.0 — Endless loop, not completed, but full of soul._
+
+So — grab your imaginary backpack, prep those formulas, and dive into the dungeon. Your GPA may not survive, but you will!
