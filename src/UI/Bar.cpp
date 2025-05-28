@@ -9,8 +9,6 @@ Bar::Bar(const std::string &bg, const std::string &fill, const sf::Color &color,
     }
     bgSprite.setTexture(bgTexture);
     bgSprite.setPosition(pos);
-    // fillSprite.setTexture(fillTexture);
-    // fillSprite.setPosition(pos);
 
     // Initialize bar
     frontBar.setFillColor(color);

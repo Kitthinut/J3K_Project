@@ -29,7 +29,6 @@ class Skill {
 
         ~Skill() = default;
 
-
         std::string getName() const { return _name; }
 
         int getManaCost() const { return _manaCost; }

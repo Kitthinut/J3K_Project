@@ -72,8 +72,8 @@ class Dungeon {
         bool  gameEnded          = false;
 
         // Entities
-        Player                  *player = nullptr;
-        Entity                   boss   = {"Boss", 100, 100, 10, 10, 1};
+        Player                  *player     = nullptr;
+        Entity                   boss       = {"Boss", 100, 100, 10, 10, 1};
         std::vector<std::string> bossImages = {};
 
         // UI

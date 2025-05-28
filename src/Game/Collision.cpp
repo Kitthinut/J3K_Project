@@ -19,7 +19,7 @@ bool Collision::hitCollisions(sf::FloatRect              player,
     });
 }
 
-// Check if the player collides with obstacles 
+// Check if the player collides with obstacles
 bool Collision::hitObstacles(sf::FloatRect player) {
     return hitCollisions(player, getCurrentObstacles());
 }

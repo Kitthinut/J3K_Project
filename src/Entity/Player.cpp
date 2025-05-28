@@ -9,7 +9,7 @@ Player::Player(sf::Vector2f position, std::string name, int maxHP, int currentHP
     : Entity(name, maxHP, currentHP, maxMana, currentMana, attackPower,
              defensePower, level) {
     // Load player sprite
-    if (!_texture.loadFromFile("assets/characters/Spritesheet.png")) {
+    if (!_texture.loadFromFile("assets/character/Spritesheet.png")) {
         std::cerr << "Failed to load sprite sheet!" << std::endl;
     }
     _sprite.setScale(3.0f, 3.0f);

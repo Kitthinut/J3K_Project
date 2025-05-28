@@ -15,8 +15,8 @@ class CharacterInfo: public Popup {
             : Popup(font, size, position) {}
 
         void update(const std::string name, const int level, const Volume &hp,
-                     const Volume &mana, const Volume &exp, const int &atk,
-                     const int &def);
+                    const Volume &mana, const Volume &exp, const int &atk,
+                    const int &def);
 
         void render(sf::RenderWindow &window) override;
 };

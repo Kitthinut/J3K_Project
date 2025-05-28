@@ -42,10 +42,9 @@ class Collision {
 
         void setCurrentRoom(Room room) { current_room = room; }
 
-        bool        hitObstacles(sf::FloatRect player);
-        Room        hitWarps(sf::FloatRect player);
+        bool     hitObstacles(sf::FloatRect player);
+        Room     hitWarps(sf::FloatRect player);
         Interact onInteractables(sf::FloatRect player);
 
-        void draw(sf::RenderWindow &window, Interact interact,
-                  bool debug = false);
+        void draw(sf::RenderWindow &window, Interact interact, bool debug = false);
 };

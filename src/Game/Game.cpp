@@ -36,7 +36,6 @@ Game::Game() {
                         "Tip: Plan carefully, every action consumes time.\n"
                         "Good luck, and enjoy your journey here! ^_^\n"
                         "Press 'SPACE' to start your adventure!");
-
 }
 
 // Function to change the room and update the background

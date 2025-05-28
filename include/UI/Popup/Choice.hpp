@@ -12,7 +12,9 @@ class Choice: public Popup {
         int                      selected = 0;
 
     public:
-        Choice(const sf::Font &font, const sf::Vector2f &size, const sf::Vector2f &position): Popup(font, size, position) {}
+        Choice(const sf::Font &font, const sf::Vector2f &size,
+               const sf::Vector2f &position)
+            : Popup(font, size, position) {}
 
         void open() override;
 

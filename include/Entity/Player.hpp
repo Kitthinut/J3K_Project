@@ -41,11 +41,11 @@ class Player: public Entity {
                int maxMana, int currentMana, int attackPower, int defensePower,
                int level);
         ;
-       
+
         int getEXP() const { return _exp; }
-        
+
         int getStatePoint() const { return _state_point; }
-    
+
         void setMoveable(bool moveable) { _moveable = moveable; }
 
         void setPosition(sf::Vector2f position);

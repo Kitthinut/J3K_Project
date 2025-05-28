@@ -1,6 +1,6 @@
 #pragma once
 
-class Skill; // Forward declaration of the Skill class
+#include "Skill.hpp"
 
 #include <iostream>
 
@@ -105,5 +105,3 @@ class Entity {
         // Increase current mana by a specified amount
         void increaseCurrentMana(int amount);
 };
-
-#include "Skill.hpp"

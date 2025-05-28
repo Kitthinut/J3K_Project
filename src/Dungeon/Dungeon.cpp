@@ -15,14 +15,14 @@ Dungeon::Dungeon(UI &ui, Player &player): ui(&ui), player(&player) {
 
     // Load boss texture
     for (const auto &entry :
-         std::filesystem::directory_iterator("assets/dungeon/Boss")) {
+         std::filesystem::directory_iterator("assets/dungeon/boss")) {
         if (entry.is_regular_file() && (entry.path().extension() == ".PNG" ||
                                         entry.path().extension() == ".png")) {
             bossImages.push_back(entry.path().string());
         }
     }
     boss.setSkill(0, new Skill("Normal Attact", 0, 0, 10, 1.0f, 0));
-    
+
     // Set initial phase
     setPhase(Phase::Opening);
 }

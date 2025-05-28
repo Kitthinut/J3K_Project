@@ -26,7 +26,7 @@ void Choice::render(sf::RenderWindow &window) {
             texts[i].setFillColor(sf::Color::Yellow);
         } else {
             texts[i].setFillColor(sf::Color::White);
-        } 
+        }
         window.draw(texts[i]);
     }
 }

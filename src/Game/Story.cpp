@@ -32,8 +32,7 @@ void Story::introduction(sf::RenderWindow &window) {
         "Only by surviving 40 days can you escape. \\o/",
         "Will you endure the grind and power through to the end?",
         "...",
-        "Press SPACE to begin your journey. >_<"
-    };
+        "Press SPACE to begin your journey. >_<"};
 
     sf::Text text;
     text.setFont(font);
@@ -205,7 +204,6 @@ void Story::showEnding(sf::RenderWindow &window) {
                    noteBounds.top + noteBounds.height / 2.0f);
     note.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f + 50);
 
-        
     // Display the final text for 3 seconds
     sf::Clock clock;
     float     elapsed = 0;
