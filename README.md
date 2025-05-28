@@ -33,15 +33,14 @@ All art and assets are lovingly hand-made by our team — simple, stylish, and f
 
 ### 📏 Rules:
 - You lose a battle if your HP reaches 0, but you will revive with 50% of your max HP.
-- All actions (interacting, fighting, resting) consume time.
+- All actions (fighting, resting) consume time.
 - Skills consume different amounts of Mana depending on their power.
 - Using normal attacks during battle helps restore Mana.
 - You can only upgrade your stats when you're inside your dorm room.
-- Defeating 5 bosses automatically starts a new day.
-- Sleeping also triggers the start of a new day.
 - Each day has 5 activity slots:
   - Fighting a boss consumes 1 slot.
   - Resting consumes 1 slot.
+- Sleeping also triggers the start of a new day.
 
 ---
 
@@ -49,30 +48,30 @@ All art and assets are lovingly hand-made by our team — simple, stylish, and f
 
 ### 🔧 Functional Requirements 
 
-- 🎮 The player can control the character using the keyboard. Movement = freedom!
+- 🎮 The player can control the character using the keyboard.
 - ❤️ The game must show HP (Health), MP (Mana), and EXP bars clearly — so you always know how close you are to greatness... or doom.
 - 🛋️ Every room must allow interaction with cute (and possibly suspicious) objects like desks, appliances, or mystery consoles.
 - ⚔️ Battles and stat upgrades must work seamlessly — tap that key, and feel the response instantly!
-- ✨ Skills must have unique effects. Choose wisely — some sparkle, some boom.
+- ✨ Skills must have unique DMG amount. Choose Wisely—
 
 ### 🧠 Non-Functional Requirements 
 
 - 🪟 The game must run smoothly on Windows — no hiccups, no drama.
 - ⚡ A buttery-smooth 60 FPS is a must — your adventure deserves no lag!
 - 🖼️ UI elements should be crisp and readable at 1920x1080. No squinting allowed.
-- 🚪 Loading between rooms should take no more than 2 seconds — we’re speedrunning, baby!
-- 📦 The game and its updates should stay light — no 10 GB surprises here.
+- 🚪 Loading between rooms should take no more than 1 seconds — we’re speedrunning, baby!
+- 📦 The game and its updates should stay light — no 1 GB surprises here.
 
 ---
 
 ## 🧑‍💻 User Manual
 
-### Installation & Setup
+### 🛠️ Installation & Setup
 
 1. **Download & Launch:**
-   - Download the game ZIP.
-   - Extract to any folder.
-   - Run `FIBO_XI_Dungeon.exe`.
+   - Download the _**FIBO_XI_DUNGEON_V1.zip**_ [HERE](https://github.com/Kitthinut/J3K_Project/releases).
+   - Extract it to any folder.
+   - Run `FIBO_XI_Dungeon.exe` to start playing.
 
 2. **Objective:**
    - Survive in an infinite academic dungeon.
@@ -81,17 +80,17 @@ All art and assets are lovingly hand-made by our team — simple, stylish, and f
 
 3. **Core Gameplay:**
    - Move freely using the keyboard.
-   - Interact with dorm objects, NPCs, and boss rooms.
+   - Interact with dorm objects and boss rooms.
    - Engage in battles and upgrade health/mana.
    - Manage your day count and plan each move.
 
 4. **Upgrades:**
    - Upgrades are available via dorm room terminal.
-   - Each boss gives you EXP and sometimes items.
+   - Each boss gives you EXP.
    - Max HP and Mana are capped at 100 in v.1.
 
 5. **End Condition:**
-   - Endless loop until you fall (HP = 0).
+   - Survive...die...revive... manage your life for 40 days.
    - Track your survival stats manually.
 
 ---
@@ -115,10 +114,10 @@ All art and assets are lovingly hand-made by our team — simple, stylish, and f
 
 | Role               | Contributor IDs                           |
 |--------------------|-------------------------------------------|
-| Game Design        | 6703, 6707, 6731                          |
-| Art & UI           | 6703                                      |
-| Programming        | 6707, 6731, 6740                          |
-| Testing & Balance  | All Team Members                          |
+| Game Design        | 6703, 6707, 6731, 6740                    |
+| Art & UI           | 6703, 6707, 6731                          |
+| Programming        | 6703, 6707, 6731, 6740                    |
+| Testing & Balance  | 6740                                      |
 | Library Used       | SFML (Simple and Fast Multimedia Library) |
 
 > Inspired by FIBO Life, Engineered by pain, Built with ❤️
