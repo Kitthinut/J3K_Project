@@ -8,7 +8,7 @@
 Game::Game() {
     // Game's icon
     sf::Image icon;
-    if (icon.loadFromFile("assets/ui/icon_game.png")) {
+    if (icon.loadFromFile("assets/ui/Icon.PNG")) {
         window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     }
 
