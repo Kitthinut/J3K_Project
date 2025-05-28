@@ -70,7 +70,7 @@ All art and assets are lovingly hand-made by our team — simple, stylish, and f
 ### Installation & Setup
 
 1. **Download & Launch:**
-   - Download the game ZIP.
+   - Download the game [HERE](https://github.com/Kitthinut/J3K_Project/releases).
    - Extract to any folder.
    - Run `FIBO_XI_Dungeon.exe`.
 
