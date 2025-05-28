@@ -3,12 +3,11 @@
 #include "Entity.hpp"
 #include "Enum/Direction.hpp"
 #include "Game/Collision.hpp"
-#include "Inventory.hpp"
 
 #include <SFML/Graphics.hpp>
 
 #define PLAYER_FRAME    64
-#define PLAYER_SPEED    200
+#define PLAYER_SPEED    200.0f // Speed of the player in pixels per second
 #define ANIMATION_SPEED 0.1
 
 // class Player : public Entity {
@@ -27,34 +26,35 @@ class Player: public Entity {
         bool         _moveable        = true;
         sf::Keyboard _last_key;
 
-        Interact interact = Empty;
+        int _exp          = 0;   // The experience points of the player
+        int _exp_to_level = 100; // The experience points required to level up
+        int _state_point  = 5;   // The number of skill points the player has
+
+        Interact _interact = Empty;
 
         void movement();
 
         void animation(const Direction direction);
-
-        int _level = 1;      // The level of the player
-        int _EXPtoNextLevel; // The experience points required to reach the next
-                             // level
-        int _EXP = 0;        // The experience points of the player
-        int _gold;           // The amount of gold the player has
-        int _statePoint;     // The number of skill points the player has
-
-        Inventory _inventory; // The inventory of the player
 
     public:
         Player(sf::Vector2f position, std::string name, int maxHP, int currentHP,
                int maxMana, int currentMana, int attackPower, int defensePower,
                int level);
         ;
-
-        int getEXP() const { return _EXP; }
-
-        int getEXPtoNextLevel() const { return _EXPtoNextLevel; }
-
+       
+        int getEXP() const { return _exp; }
+        
+        int getStatePoint() const { return _state_point; }
+    
         void setMoveable(bool moveable) { _moveable = moveable; }
 
         void setPosition(sf::Vector2f position);
+
+        void setEXP(int exp) { _exp = exp; }
+
+        void increaseStatePoint(int amount) { _state_point += amount; }
+
+        void increaseEXP(int amount);
 
         const sf::FloatRect getBounds();
 
@@ -62,7 +62,7 @@ class Player: public Entity {
 
         Collision &getCollision() { return _collision; }
 
-        Interact GetInteract() { return interact; }
+        Interact GetInteract() { return _interact; }
 
         Room warpTo();
 

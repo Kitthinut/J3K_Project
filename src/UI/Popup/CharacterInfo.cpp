@@ -1,8 +1,8 @@
 #include "UI/Popup/CharacterInfo.hpp"
 
 void CharacterInfo::update(const std::string name, const int level,
-                           const Volume &hp, const Volume &mana,
-                           const Volume &exp) {
+                           const Volume &hp, const Volume &mana, const Volume &exp,
+                           const int &atk, const int &def) {
     std::vector<std::string> lines = {
         "Character Info",
         "Name: " + name,
@@ -10,8 +10,8 @@ void CharacterInfo::update(const std::string name, const int level,
         "EXP: " + std::to_string(exp.current) + " / " + std::to_string(exp.max),
         "HP: " + std::to_string(hp.current) + " / " + std::to_string(hp.max),
         "Mana: " + std::to_string(mana.current) + " / " + std::to_string(mana.max),
-        "Grades: A- (placeholder)",
-    };
+        "Attack Power: " + std::to_string(atk),
+        "Defense Power: " + std::to_string(def)};
     texts.clear();
 
     for (int i = 0; i < lines.size(); ++i) {

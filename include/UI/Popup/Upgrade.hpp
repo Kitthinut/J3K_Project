@@ -12,6 +12,7 @@ class Upgrade: public Choice {
         const sf::Vector2f              BUTTON_SIZE = {30, 30};
         std::vector<sf::RectangleShape> button_shapes;
         std::vector<sf::Text>           button_texts;
+        sf::Text                        points;
 
     public:
         Upgrade(const sf::Font &font, const sf::Vector2f &size,
@@ -20,7 +21,8 @@ class Upgrade: public Choice {
         void createButton(const char sign, const sf::Color &color, const float x,
                           const float y);
 
-        void update(const Volume &hp, const Volume &mana, const int atk, const int def);
+        void update(const int point, const Volume &hp, const Volume &mana,
+                    const int atk, const int def);
 
         void render(sf::RenderWindow &window) override;
 };

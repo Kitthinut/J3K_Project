@@ -22,6 +22,10 @@ class UI {
             _font, 20, sf::Color::White, {1640, 80}
         };
 
+        Text _text_Day = {
+            _font, 25, sf::Color::White, {20, 20}
+        };
+
         Bar _bar_hp = {
             "assets/ui/HpBar.png",
             "assets/ui/hp_bar_fill.png",
@@ -68,9 +72,10 @@ class UI {
             {WINDOW_WIDTH / 2, WINDOW_HEIGHT - 130},
         };
 
-        sf::Font& getFont() { return _font; }
+        sf::Font &getFont() { return _font; }
 
         void setLevel(const int level);
+        void setDays(const int days);
         void setBarsVolume(const Volume &hp, const Volume &mana,
                            const Volume &exp);
 

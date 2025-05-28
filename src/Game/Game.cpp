@@ -22,10 +22,24 @@ Game::Game() {
     background.setScale(WINDOW_WIDTH / backgroundTexture.getSize().x,
                         WINDOW_HEIGHT / backgroundTexture.getSize().y);
 
-    ui.dialogue.setText("Welcome to FIBO XI Dungeon!\nYou have to survive 80 "
-                        "days here to receive your grade!");
+    // Introduction / How to play
+    ui.dialogue.setText("Welcome to FIBO XI Dungeon!\n"
+                        "You're stuck in a mysterious academic maze...\n"
+                        "Survive 40 days to break free!\n"
+                        "Controls:"
+                        "Move with 'W' 'A' 'S' 'D'\n"
+                        "Hold 'Left Shift' to run\n"
+                        "Press 'C' to check your character stats\n"
+                        "Look out for glowing objects - those are interactive!\n"
+                        "Press 'SPACE' to interact with objects or people\n"
+                        "Doors to other rooms are visible on your map!\n"
+                        "Tip: Plan carefully, every action consumes time.\n"
+                        "Good luck, and enjoy your journey here! ^_^\n"
+                        "Press 'SPACE' to start your adventure!");
+
 }
 
+// Function to change the room and update the background
 void Game::changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos) {
 
     // Load new background or update other data
@@ -42,8 +56,9 @@ void Game::changeRoomTo(Room room, std::string path, sf::Vector2f spawn_pos) {
     player.getCollision().setCurrentRoom(room);
 }
 
+// Function to modify player stats based on the selected upgrade
 void Game::modifyStat(const int direction) {
-    if ((direction > 0 && upgradePoints <= 0) || direction == 0) return;
+    if ((direction > 0 && player.getStatePoint() <= 0) || direction == 0) return;
 
     int delta = direction;
     switch (ui.popup_upgrade.getSelected()) {
@@ -66,10 +81,11 @@ void Game::modifyStat(const int direction) {
     }
 
     player.setMoveable(true);
-    upgradePoints -= delta;
+    player.increaseStatePoint(-delta);
     ui.popup_upgrade.close();
 }
 
+// Function to handle the selection of choices in the popup
 void Game::handleChoiceSelection() {
     const int selected = ui.popup_choice.getSelected();
     switch (player.GetInteract()) {
@@ -77,27 +93,26 @@ void Game::handleChoiceSelection() {
             std::cout << "You chose to upgrade stats!" << std::endl;
             ui.popup_upgrade.open();
             break;
-        // case Dining:
-        //     std::cout << "Dining" << std::endl;
-        //     switch (selected) {
-        //         case 0 : player.increaseCurrentHP(30); break;
-        //         case 1 : player.increaseCurrentMana(10); break;
-        //         default: break;
-        //     }
-        //     player.setMoveable(true);
-        //     break;
         case Bed:
             std::cout << "Bed" << std::endl;
             switch (selected) {
-                case 0 : player.increaseCurrentHP(50); break;
-                case 1 : player.increaseCurrentHP(20); break;
+                case 0:
+                    player.setCurrentHP(player.getMaxHP());
+                    NextDay();
+                    break;
+                case 1:
+                    player.increaseCurrentHP(player.getCurrentHP() / 2);
+                    --slot_remaining;
+                    break;
                 default: break;
             }
+
             player.setMoveable(true);
             break;
         case Teacher_Table:
             if (!inDungeonTest) {
                 std::cout << "You chose to play games!" << std::endl;
+                --slot_remaining;
                 inDungeonTest = true;
                 dungeon.reset();
                 ui.setDungeon(true);
@@ -111,6 +126,7 @@ void Game::handleChoiceSelection() {
     ui.popup_choice.close();
 }
 
+// Function to open the appropriate popup based on the player's interaction
 void Game::openPopupForInteraction() {
     switch (player.GetInteract()) {
         case Wardrobe:
@@ -118,15 +134,10 @@ void Game::openPopupForInteraction() {
             ui.popup_choice.setChoices({"Upgrade Stats"});
             player.setMoveable(false);
             break;
-        // case Dining:
-        //     ui.popup_choice.open();
-        //     ui.popup_choice.setChoices({"[food left] Eat Food (+30 HP)",
-        //                                 "Drink Water (+10 HP)", "Drink Potion"});
-        //     player.setMoveable(false);
-        //     break;
         case Bed:
             ui.popup_choice.open();
-            ui.popup_choice.setChoices({"Sleep (+50 HP)", "Nap (+20 HP)"});
+            ui.popup_choice.setChoices(
+                {"Sleep (+100% HP & Skip Day)", "Rest (+50% HP)"});
             player.setMoveable(false);
             break;
         case Teacher_Table:
@@ -138,6 +149,12 @@ void Game::openPopupForInteraction() {
     }
 }
 
+void Game::NextDay() {
+    ++day;
+    slot_remaining = 5; // Reset skill points for the next day
+}
+
+// Function to process events such as key presses and window events
 void Game::processEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -145,6 +162,8 @@ void Game::processEvents() {
             window.close();
             break;
         }
+
+        if (event.type != sf::Event::KeyPressed) break;
 
         if (inDungeonTest) {
             bool exitDungeonTest = false;
@@ -163,7 +182,6 @@ void Game::processEvents() {
             break;
         }
 
-        if (event.type != sf::Event::KeyPressed) break;
         const sf::Keyboard::Key key = event.key.code;
 
         switch (key) {
@@ -216,14 +234,20 @@ void Game::update() {
         return;
     }
 
+    if (slot_remaining <= 0) NextDay();
+
     // Update HP and Mana bars
-    Volume hp   = {player.getCurrentHP(), player.getMaxHP()};
-    Volume mana = {player.getCurrentMana(), player.getMaxMana()};
-    Volume exp  = {player.getEXP(), player.getEXPtoNextLevel()};
+    Volume    hp   = {player.getCurrentHP(), player.getMaxHP()};
+    Volume    mana = {player.getCurrentMana(), player.getMaxMana()};
+    Volume    exp  = {player.getEXP(), 100};
+    const int atk  = player.getAttackPower();
+    const int def  = player.getDefensePower();
     ui.setBarsVolume(hp, mana, exp);
-    ui.popup_character_info.update(playerName, 1, hp, mana, exp);
-    ui.popup_upgrade.update(hp, mana, player.getAttackPower(),
-                            player.getDefensePower());
+    ui.popup_character_info.update(playerName, player.getLevel(), hp, mana, exp,
+                                   atk, def);
+    ui.popup_upgrade.update(player.getStatePoint(), hp, mana, atk, def);
+    ui.setLevel(player.getLevel());
+    ui.setDays(day);
 
     // Update Movement
     player.update();
@@ -238,6 +262,7 @@ void Game::update() {
     }
 }
 
+// Function to render the game elements on the window
 void Game::render() {
     window.clear();
 
@@ -252,12 +277,14 @@ void Game::render() {
     window.display();
 }
 
+// Main game loop that runs the game
 void Game::run() {
-    // story.introduction(window);
-    while (window.isOpen()) {
+    story.introduction(window);
+    while (window.isOpen() && day <= 40) {
         processEvents();
         update();
         render();
     }
+    story.showEnding(window);
     story.showCredits(window);
 }

@@ -11,6 +11,7 @@ Interact Collision::onInteractables(sf::FloatRect player) {
     return Empty;
 }
 
+// Check if the player collides with any of the specified collision types
 bool Collision::hitCollisions(sf::FloatRect              player,
                               std::vector<sf::FloatRect> type) {
     return std::any_of(type.begin(), type.end(), [&](const sf::FloatRect &ob) {
@@ -18,6 +19,7 @@ bool Collision::hitCollisions(sf::FloatRect              player,
     });
 }
 
+// Check if the player collides with obstacles 
 bool Collision::hitObstacles(sf::FloatRect player) {
     return hitCollisions(player, getCurrentObstacles());
 }
@@ -28,6 +30,7 @@ Room Collision::hitWarps(sf::FloatRect player) {
     return None;
 }
 
+// Draw collision boxes for the specified type with a given color
 void Collision::drawCollisions(sf::RenderWindow &window, const sf::Color &color,
                                std::vector<sf::FloatRect> type) {
     for (const sf::FloatRect &box : type) {
@@ -39,6 +42,7 @@ void Collision::drawCollisions(sf::RenderWindow &window, const sf::Color &color,
     }
 }
 
+// Draw interactable boxes with different colors based on the interaction type
 void Collision::drawInteractables(sf::RenderWindow &window, Interact interact) {
     for (const Interactable &box : getCurrentInteractables()) {
         sf::RectangleShape rect;
@@ -61,6 +65,7 @@ void Collision::drawInteractables(sf::RenderWindow &window, Interact interact) {
     }
 }
 
+// Draw the collision boxes and interactables based on the current room
 void Collision::draw(sf::RenderWindow &window, Interact interact, bool debug) {
     drawInteractables(window, interact);
 
@@ -73,6 +78,7 @@ void Collision::draw(sf::RenderWindow &window, Interact interact, bool debug) {
     }
 }
 
+// Load obstacles, warps, and interactables for each room
 void Collision::loadObstacles() {
     // Dorm room obstacles
     room_obstacles[Room::Dorm] = {
