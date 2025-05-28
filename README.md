@@ -67,12 +67,12 @@ All art and assets are lovingly hand-made by our team — simple, stylish, and f
 
 ## 🧑‍💻 User Manual
 
-### Installation & Setup
+### 🛠️ Installation & Setup
 
 1. **Download & Launch:**
-   - Download the game [HERE](https://github.com/Kitthinut/J3K_Project/releases).
-   - Extract to any folder.
-   - Run `FIBO_XI_Dungeon.exe`.
+   - Download the _**FIBO_XI_DUNGEON_V1.zip**_ [HERE](https://github.com/Kitthinut/J3K_Project/releases).
+   - Extract it to any folder.
+   - Run `FIBO_XI_Dungeon.exe` to start playing.
 
 2. **Objective:**
    - Survive in an infinite academic dungeon.
